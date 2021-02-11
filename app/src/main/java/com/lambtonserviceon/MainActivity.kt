@@ -109,16 +109,20 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
         if (result) {
 
-
-            Toast.makeText(applicationContext , result.toString() ,  Toast.LENGTH_LONG).show()
-
+        //    Toast.makeText(applicationContext , result.toString() ,  Toast.LENGTH_LONG).show()
             Searchbtn.visibility = View.VISIBLE
 
+        }else if (result == false )  {
 
+            Toast.makeText(applicationContext , "Invalid Postal Code" ,  Toast.LENGTH_LONG).show()
 
+            Searchbtn.visibility = View.INVISIBLE
 
 
         }
+
+
+
 
     }
 
