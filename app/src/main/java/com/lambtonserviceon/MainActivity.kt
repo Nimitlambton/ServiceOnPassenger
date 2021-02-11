@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import kotlinx.android.synthetic.main.activity_main.*
 import org.w3c.dom.Text
+import java.util.regex.Pattern
 
 class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
@@ -19,7 +20,9 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
     lateinit  var toggle : ActionBarDrawerToggle
 
     lateinit var button : Button
+    lateinit var Searchbtn : Button
     lateinit var  postalCode : EditText
+
 
 
 
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
 
 
+        Searchbtn = findViewById(R.id.Searchbtn)
         button = findViewById(R.id.chkbtn)
         button.setOnClickListener(this)
 
@@ -79,7 +83,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
     fun checkPostalCode(postalCode:String){
 
 
-        Toast.makeText(applicationContext ,  postalCode,  Toast.LENGTH_LONG).show()
+       // Toast.makeText(applicationContext ,  postalCode,  Toast.LENGTH_LONG).show()
 
 
         if ( postalCode == "" ) {
@@ -91,6 +95,30 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
         }
 
 
+
+
+            var    pattern  =  Regex  ("^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$")
+
+
+           var result = pattern.matches(postalCode)
+
+
+
+
+
+
+        if (result) {
+
+
+            Toast.makeText(applicationContext , result.toString() ,  Toast.LENGTH_LONG).show()
+
+            Searchbtn.visibility = View.VISIBLE
+
+
+
+
+
+        }
 
     }
 
