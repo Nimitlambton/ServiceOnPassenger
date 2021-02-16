@@ -1,5 +1,6 @@
 package com.lambtonserviceon
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -40,19 +41,36 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
 
         navView.setNavigationItemSelectedListener {
+//
+//
             when(it.itemId){
 
-                R.id.miItem1 ->
 
-                    Toast.makeText(this , "helloworld" ,Toast.LENGTH_SHORT).show()
+                R.id.miItem1 -> {
+                    val intent = Intent(this, ProfileDetails::class.java)
+
+                startActivity(intent)
+                }
+
+                R.id.miItem2 -> {
 
 
 
+                    val intent = Intent(this, paymentAct::class.java)
+
+                    startActivity(intent)
+
+                }
+
+                R.id.miItem3 -> {
+                    Toast.makeText(this, "Dummy", Toast.LENGTH_SHORT).show()
+                }
 
             }
+
+
             true
         }
-
 
 
         Searchbtn = findViewById(R.id.Searchbtn)
@@ -64,8 +82,6 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
 
     }
-
-
 
 
 
@@ -82,82 +98,34 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
     fun checkPostalCode(postalCode:String){
 
-
-       // Toast.makeText(applicationContext ,  postalCode,  Toast.LENGTH_LONG).show()
-
-
         if ( postalCode == "" ) {
 
-
             Toast.makeText(applicationContext , "please enter PostalCode  " ,  Toast.LENGTH_LONG).show()
-
-
         }
-
-
-
-
             var    pattern  =  Regex  ("^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$")
-
-
-           var result = pattern.matches(postalCode)
-
-
-
-
-
+            var result = pattern.matches(postalCode)
 
         if (result) {
-
         //    Toast.makeText(applicationContext , result.toString() ,  Toast.LENGTH_LONG).show()
             Searchbtn.visibility = View.VISIBLE
-
         }else if (result == false )  {
-
             Toast.makeText(applicationContext , "Invalid Postal Code" ,  Toast.LENGTH_LONG).show()
-
             Searchbtn.visibility = View.INVISIBLE
-
-
         }
-
-
-
-
     }
+
 
 
 
 
     override fun onClick(v: View?) {
-
         when(v?.id ){
-
-
             R.id.chkbtn ->{
-
                 checkPostalCode(postalCode.text.toString())
-
             }
-
-
-
         }
 
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
 
 
 
