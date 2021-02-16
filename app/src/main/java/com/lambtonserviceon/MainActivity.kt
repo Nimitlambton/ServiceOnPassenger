@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
         Searchbtn = findViewById(R.id.Searchbtn)
         button = findViewById(R.id.chkbtn)
         button.setOnClickListener(this)
-
+        Searchbtn.setOnClickListener(this)
 
         postalCode = findViewById(R.id.Postal)
 
@@ -119,10 +119,24 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
 
     override fun onClick(v: View?) {
+
         when(v?.id ){
+
             R.id.chkbtn ->{
                 checkPostalCode(postalCode.text.toString())
             }
+
+            R.id.Searchbtn -> {
+
+
+                val intent = Intent(this, rideDetails::class.java)
+
+                startActivity(intent)
+
+
+            }
+
+
         }
 
     }

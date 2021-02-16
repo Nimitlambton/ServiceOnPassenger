@@ -9,9 +9,9 @@
 
     <Button
         android:id="@+id/dpBtn"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="140dp"
+        android:layout_width="185dp"
+        android:layout_height="185dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="68dp"
         android:background="@drawable/round_button"
         android:textAlignment="center"
@@ -72,5 +72,17 @@
         android:text="Last Name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <ImageView
+        android:id="@+id/Dispic"
+        android:layout_width="167dp"
+        android:layout_height="151dp"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="88dp"
+        app:layout_constraintBottom_toTopOf="@+id/firstName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
