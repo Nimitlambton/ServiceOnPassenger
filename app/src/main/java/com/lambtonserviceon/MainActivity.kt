@@ -1,8 +1,17 @@
 package com.lambtonserviceon
 
+import User
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -10,19 +19,28 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
-import org.w3c.dom.Text
-import java.util.regex.Pattern
 
-class MainActivity : AppCompatActivity() ,  View.OnClickListener{
+
+class MainActivity : AppCompatActivity() ,  View.OnClickListener , LocationListener {
 
 
 
     lateinit  var toggle : ActionBarDrawerToggle
-
     lateinit var button : Button
     lateinit var Searchbtn : Button
     lateinit var  postalCode : EditText
+
+    private lateinit var locationManager: LocationManager
+    private lateinit var tvGpsLocation: TextView
+
+
+    private lateinit var CurrrentUser : User
+
+
+    val locationPermissionCode = 2
 
 
 
@@ -32,6 +50,10 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
+        //Initalizing of User
+         CurrrentUser = User()
 
         toggle = ActionBarDrawerToggle(this , drawerlayout , R.string.open , R.string.close)
         drawerlayout.addDrawerListener(toggle)
@@ -81,6 +103,37 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
         postalCode = findViewById(R.id.Postal)
 
 
+        this.getLocation()
+
+
+
+
+        postalCode.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+
+               checkPostalCode( postalCode.text.toString())
+
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+
+
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+              //  checkPostalCode( postalCode.text.toString())
+
+
+
+            }
+        })
+
+
     }
 
 
@@ -118,6 +171,9 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
 
 
 
+
+
+
     override fun onClick(v: View?) {
 
         when(v?.id ){
@@ -129,7 +185,13 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
             R.id.Searchbtn -> {
 
 
+
+
+
                 val intent = Intent(this, rideDetails::class.java)
+
+
+               intent.putExtra("User" , this.CurrrentUser )
 
                 startActivity(intent)
 
@@ -140,6 +202,82 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener{
         }
 
     }
+
+
+
+
+
+
+    private fun getLocation( ) {
+
+
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+    override fun onLocationChanged(location: Location) {
+
+        this.CurrrentUser.lati = location.latitude.toString()
+        this.CurrrentUser.longi =  location.longitude.toString()
+
+      //  Toast.makeText(this, "Latitude: " + location.latitude.toString() + " , Longitude: " + location.longitude.toString(), Toast.LENGTH_SHORT).show()
+
+
+
+
+
+
+
+    }
+
+
+
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderEnabled(provider: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderDisabled(provider: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == locationPermissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 
