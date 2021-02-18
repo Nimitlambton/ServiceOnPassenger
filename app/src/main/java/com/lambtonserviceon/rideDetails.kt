@@ -1,25 +1,34 @@
 package com.lambtonserviceon
 
-import User
+
+import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.example.Example
 import com.google.gson.Gson
+import com.lambtonserviceon.models.User
 import okhttp3.*
 import java.io.IOException
 
 
-lateinit var  search :Button
+lateinit var  mapbtn :Button
 lateinit var  Destination : EditText
+lateinit var  Distance:  EditText
+lateinit var EstimatedPrice : EditText
+private lateinit var CurrrentUser : User
+
+
+//initalizing of OKHttp Client
 
 private val client = OkHttpClient()
+
 class rideDetails : AppCompatActivity() {
 
 
-    private lateinit var CurrrentUser : User
-    private val exception: Exception? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ride_details)
@@ -27,65 +36,43 @@ class rideDetails : AppCompatActivity() {
 
 
 
-        //user data from MainActivity
-
-        CurrrentUser = intent.getParcelableExtra("User")
-
-
-
-
-        search = findViewById(R.id.Map)
-
-
-      Destination = findViewById(R.id.destination)
+        //Initializing of user data from MainActivity
+        CurrrentUser = intent.getParcelableExtra("com.lambtonserviceon.models.User")
 
 
 
 
+        mapbtn = findViewById(R.id.Map)
+
+        Destination = findViewById(R.id.destination)
+        Distance = findViewById(R.id.distance)
+        EstimatedPrice = findViewById(R.id.EstimatedPrice)
 
 
 
+        mapbtn.setOnClickListener {
 
 
-        search.setOnClickListener {
-
-
-
-
-
-
-
+            var intent = Intent( this , MapAct::class.java)
+            intent.putExtra( "User"  ,  CurrrentUser  )
+            startActivity(intent)
         }
 
 
-         //google Api
-
-        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${CurrrentUser.lati},${CurrrentUser.longi}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
-
-
-
-
-
-
-
-
-
+         //google Places api to fetch data of the nearest Service Ontario
+        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${CurrrentUser.CurrentLati},${CurrrentUser.CurrentLongi}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
 
     }
 
 
-
-
-
+//function to setup Actionbar back button and title
     fun setupActionBarBtn(){
 
         this.title = "Ride Details "
         val actionbar = supportActionBar
         //set back button
         actionbar!!.setDisplayHomeAsUpEnabled(true)
-
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -97,6 +84,7 @@ class rideDetails : AppCompatActivity() {
 
 
     fun run(url: String) {
+
         val request = Request.Builder()
             .url(url)
             .build()
@@ -113,37 +101,61 @@ class rideDetails : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
 
 
-
-//                println( response.body?.string())
-
-
-
                 val gson = Gson()
-
-                var mUser =  gson.fromJson(response.body?.string(), Example::class.java)
-
-
-                 println(mUser.results[0].formattedAddress)
-                println(mUser.results[0].geometry.location.lat)
-                println(mUser.results[0].geometry.location.lng)
-
-                CurrrentUser.Destination = mUser.results[0].formattedAddress
+                var places =  gson.fromJson(response.body?.string(), Example::class.java)
 
 
-                println(CurrrentUser.Destination)
+                //Setting up destination name of current user
+                CurrrentUser.Destination = places.results[0].formattedAddress
 
 
-                runOnUiThread {
 
+                var lati =  places.results[0].geometry.location.lat
+                var longi = places.results[0].geometry.location.lng
+
+                              //setting up lon & lat for the current user to send
+                CurrrentUser.DestinationLati = lati.toString()
+                CurrrentUser.Destinationlongi = longi.toString()
+
+
+
+
+                //passing Destination location and the current location of the user
+                val locationA = Location("point A")
+                locationA.setLatitude(lati);
+                locationA.setLongitude(longi);
+
+
+                val locationB = Location("point B")
+                locationB.setLatitude(CurrrentUser.CurrentLati.toDouble());
+                locationB.setLongitude(CurrrentUser.CurrentLongi.toDouble());
+
+
+
+                //converting distance from meters to km
+                val distance  = locationB.distanceTo(locationA) / 1000;
+
+                //funtion to calculate fare
+                var fare  =  distance * 10
+
+
+                //setting up on ui thats why runing on diffrent thread of UI
+                runOnUiThread{
                     Destination.setText(CurrrentUser.Destination )
+                    Distance.setText(distance.toString() + "   KM")
+                    EstimatedPrice.setText("$ ${fare.toString()}")
 
                 }
-
 
             }
 
 
         })
+
+
+
+
+
     }
 
 
