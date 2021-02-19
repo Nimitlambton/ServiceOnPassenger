@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 
 import com.lambtonserviceon.models.User
 
@@ -92,6 +93,24 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(PERTH, 10f))
         myMarker = mMap.addMarker(MarkerOptions().position(PERTH).title("hey you are here"))
         myMarker.showInfoWindow()
+
+
+
+        var DestinationAnontation = LatLng(CurrrentUser.DestinationLati  .toDouble(),CurrrentUser.Destinationlongi  .toDouble())
+
+
+        myMarker = mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
+
+
+
+
+
+
+        val polyline = mMap.addPolyline(PolylineOptions().add(PERTH ,DestinationAnontation) )
+
+
+
+
 
     }
 
