@@ -1,16 +1,9 @@
 package com.lambtonserviceon
 
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Location
+
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.FragmentActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -19,25 +12,31 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-
+import com.google.gson.Gson
+import com.google.maps.android.PolyUtil
 import com.lambtonserviceon.models.User
+import com.lambtonserviceon.models.directions.Direction
+import com.lambtonserviceon.models.directions.Step
+import okhttp3.*
+import java.io.IOException
 
 
 
 private lateinit var CurrrentUser : User
-
-class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClickListener{
-
-
+private val client = OkHttpClient()
+private lateinit var  decodedPolyLine : List <LatLng>
 
 
 
+
+
+
+class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClickListener {
 
 
     private lateinit var mMap: GoogleMap
-    private lateinit var myMarker : Marker
-    private var PERTH = LatLng(-31.952854, 115.857342)
-    private var title2 = "blue"
+    private lateinit var myMarker: Marker
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,42 +50,24 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
 
 
+        CurrrentUser = intent.getParcelableExtra("User")
+
+
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
-        //Initializing of user data from MainActivity
-        CurrrentUser = intent.getParcelableExtra("User" )
-//
-//        println("this is  current location" )
-//        println(CurrrentUser.CurrentLati)
-//        println(CurrrentUser.CurrentLati)
-//        println("this is  destination  location" )
-//        println(CurrrentUser.Destinationlongi)
-//        println(CurrrentUser.DestinationLati)
-
-
-
-
-
-
-
-
     }
-
 
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.clear()
 
+        var DestinationAnontation = LatLng(
+            CurrrentUser.DestinationLati.toDouble(),
+            CurrrentUser.Destinationlongi.toDouble())
 
-
-        var PERTH = LatLng(CurrrentUser.CurrentLati.toDouble(),CurrrentUser.CurrentLongi.toDouble())
-
-
-
-
+        var PERTH = LatLng(CurrrentUser.CurrentLati.toDouble(), CurrrentUser.CurrentLongi.toDouble())
 
 
         mMap?.animateCamera(CameraUpdateFactory.newLatLng(PERTH))
@@ -95,25 +76,17 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         myMarker.showInfoWindow()
 
 
-
-        var DestinationAnontation = LatLng(CurrrentUser.DestinationLati  .toDouble(),CurrrentUser.Destinationlongi  .toDouble())
-
-
-        myMarker = mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
+        myMarker =
+            mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
+        
 
 
+        val url = getURL(PERTH, DestinationAnontation)
 
 
-
-
-        val polyline = mMap.addPolyline(PolylineOptions().add(PERTH ,DestinationAnontation) )
-
-
-
-
+        this.run(url)
 
     }
-
 
 
     override fun onMarkerClick(p0: Marker?): Boolean {
@@ -121,6 +94,88 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
     }
 
 
+    private fun getURL(from: LatLng, to: LatLng): String {
+
+        val origin = "origin=" + from.latitude + "," + from.longitude
+        val dest = "destination=" + to.latitude + "," + to.longitude
+        val sensor = "sensor=false"
+        val params = "$origin&$dest"
+        val key = "&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc"
+
+        print( from )
+        print( to )
+
+        println("https://maps.googleapis.com/maps/api/directions/json?$params$key")
+        return "https://maps.googleapis.com/maps/api/directions/json?$params$key"
+
+
+    }
+
+
+    fun run(url: String) {
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+
+
+            override fun onFailure(call: Call, e: IOException) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+
+                val gson = Gson()
+                var Direction2 = gson.fromJson(response.body?.string(), Direction::class.java)
+
+
+                  println("helloworld.............")
+                println(Direction2.routes[0].legs[0].steps)
+                addPolyLines(Direction2.routes[0].legs[0].steps)
+
+            }
+
+
+        })
+    }
+
+    private fun addPolyLines(steps: List<Step>) {
+
+        val path: MutableList<List<LatLng>> = ArrayList()
+
+        for (step in steps) {
+             decodedPolyLine = PolyUtil.decode(step.polyline.points);
+
+
+            println("hellowowlr-------")
+            println(decodedPolyLine)
+            path.add( decodedPolyLine)
+
+
+
+        }
+
+
+
+
+        runOnUiThread {
+
+           val  polyopt = PolylineOptions()
+
+            for(p in path)
+            polyopt.addAll(p)
+
+            val polyline = mMap.addPolyline(polyopt)
+
+        }
+
+
+    }
 }
 
 
