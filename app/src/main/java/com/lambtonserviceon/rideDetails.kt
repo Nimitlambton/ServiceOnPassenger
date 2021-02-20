@@ -15,6 +15,7 @@ import java.io.IOException
 
 
 lateinit var  mapbtn :Button
+lateinit var  confirmRidebtn :Button
 lateinit var  Destination : EditText
 lateinit var  Distance:  EditText
 lateinit var EstimatedPrice : EditText
@@ -32,6 +33,8 @@ class rideDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ride_details)
+
+        //setup back button
         this.setupActionBarBtn()
 
 
@@ -41,13 +44,12 @@ class rideDetails : AppCompatActivity() {
 
 
 
-
+//matching View with there ID
         mapbtn = findViewById(R.id.Map)
-
         Destination = findViewById(R.id.destination)
         Distance = findViewById(R.id.distance)
         EstimatedPrice = findViewById(R.id.EstimatedPrice)
-
+        confirmRidebtn = findViewById(R.id.ConfirmRide)
 
 
         mapbtn.setOnClickListener {
@@ -56,6 +58,17 @@ class rideDetails : AppCompatActivity() {
             var intent = Intent( this , MapAct::class.java)
             intent.putExtra( "User"  ,  CurrrentUser  )
             startActivity(intent)
+        }
+
+        confirmRidebtn.setOnClickListener {
+
+
+
+            var intent = Intent( this , ConfirmRide::class.java)
+            intent.putExtra( "User"  ,  CurrrentUser  )
+            startActivity(intent)
+
+
         }
 
 

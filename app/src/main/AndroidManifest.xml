@@ -22,7 +22,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapAct"></activity>
+        <activity android:name=".enRouteDriver"></activity>
+        <activity android:name=".ConfirmRide" />
+        <activity android:name=".MapAct" />
         <activity android:name=".rideDetails" />
         <activity android:name=".paymentAct" />
         <activity android:name=".ProfileDetails" />
@@ -32,18 +34,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
-
-
         </activity>
-
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc" />
-
-
     </application>
 
 </manifest>
