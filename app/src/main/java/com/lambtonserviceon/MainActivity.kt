@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
             R.id.Searchbtn -> {
 
-                this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=6baa4975f86b0b96d771b84a82d8c659")
+                this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
 
             }
 
