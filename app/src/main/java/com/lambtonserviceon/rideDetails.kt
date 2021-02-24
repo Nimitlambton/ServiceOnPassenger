@@ -8,6 +8,9 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.example.Example
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.lambtonserviceon.models.User
 import okhttp3.*
@@ -36,6 +39,13 @@ class rideDetails : AppCompatActivity() {
 
         //setup back button
         this.setupActionBarBtn()
+
+        println("hellowowlr")
+
+
+        val firestore = Firebase.firestore
+
+
 
 
 

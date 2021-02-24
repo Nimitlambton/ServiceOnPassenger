@@ -9,19 +9,28 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.InvalidationTracker
+import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import kotlinx.android.synthetic.main.activity_payment.*
+import androidx.lifecycle.Observer
 
 class ProfileDetails : AppCompatActivity() {
 
     lateinit var button : Button
     lateinit var imageView: ImageView
+    lateinit var saveBtn :Button
+    lateinit var  firstName : EditText
+    lateinit var lastName : EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_details)
+
 
 
 
@@ -54,6 +63,39 @@ class ProfileDetails : AppCompatActivity() {
 
 
         }
+
+
+
+
+        saveBtn = findViewById(R.id.savebtn)
+        firstName = findViewById(R.id.firstName)
+        lastName = findViewById(R.id.lastName)
+
+
+
+
+
+
+
+
+
+        saveBtn.setOnClickListener {
+
+
+            val firstname = firstName.text.toString()
+            val lastname = lastName.text.toString()
+
+            println(firstname + lastname)
+
+
+
+
+        }
+
+
+
+
+
 
 
 
