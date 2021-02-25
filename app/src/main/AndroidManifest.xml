@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".updateCardDetails"></activity>
+        <activity android:name=".updateUserDetails"></activity>
+        <activity android:name=".updateCardDetails" />
         <activity android:name=".enRouteDriver" />
         <activity android:name=".ConfirmRide" />
         <activity android:name=".MapAct" />

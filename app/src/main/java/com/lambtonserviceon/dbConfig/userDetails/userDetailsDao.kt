@@ -1,10 +1,7 @@
 package com.lambtonserviceon.dbConfig.userDetails
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 
 @Dao
@@ -16,6 +13,13 @@ interface userDetailsDao {
 
     @Query("SELECT * from userDetailsTables")
     fun getalldata(): LiveData<List<UserDetails>>
+
+    @Update
+    suspend fun update(user : UserDetails)
+
+    //Delete all data
+    @Query("DELETE FROM userDetailsTables")
+    suspend fun deleteAll()
 
 
 

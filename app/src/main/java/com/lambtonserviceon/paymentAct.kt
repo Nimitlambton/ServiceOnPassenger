@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.activity_profile_details.*
 
 class paymentAct : AppCompatActivity() {
 
@@ -54,6 +55,7 @@ class paymentAct : AppCompatActivity() {
 
                 }else{
 
+                    update.visibility = View.INVISIBLE
                     println("user database is empty ")
 
 

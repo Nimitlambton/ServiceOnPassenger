@@ -28,7 +28,7 @@ abstract  class  userDeatilsDatabase :RoomDatabase () {
 
                     var fee = database.userDeatilsDao()
                     // Delete all content here.
-                    // fee.deleteAll()
+                     // fee.deleteAll()
 
 
                 }
