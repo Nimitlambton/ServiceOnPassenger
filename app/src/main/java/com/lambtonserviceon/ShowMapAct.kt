@@ -26,7 +26,6 @@ private lateinit var CurrrentUser : User
 
 
 //initalizing of OKHttp Client
-
 private val client = OkHttpClient()
 
 class rideDetails : AppCompatActivity() {
@@ -39,15 +38,6 @@ class rideDetails : AppCompatActivity() {
 
         //setup back button
         this.setupActionBarBtn()
-
-        println("hellowowlr")
-
-
-        val firestore = Firebase.firestore
-
-
-
-
 
         //Initializing of user data from MainActivity
         CurrrentUser = intent.getParcelableExtra("com.lambtonserviceon.models.User")
@@ -105,7 +95,7 @@ class rideDetails : AppCompatActivity() {
 
 
 
-
+//calling Rest Api
     fun run(url: String) {
 
         val request = Request.Builder()
@@ -139,8 +129,6 @@ class rideDetails : AppCompatActivity() {
                               //setting up lon & lat for the current user to send
                 CurrrentUser.DestinationLati = lati.toString()
                 CurrrentUser.Destinationlongi = longi.toString()
-
-
 
 
                 //passing Destination location and the current location of the user

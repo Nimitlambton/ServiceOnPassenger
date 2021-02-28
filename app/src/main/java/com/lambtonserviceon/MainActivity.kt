@@ -6,12 +6,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.lambton.GetZipCode
 import com.lambtonserviceon.models.User
@@ -20,7 +27,7 @@ import okhttp3.*
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity() ,  View.OnClickListener {
+class MainActivity : AppCompatActivity()  {
 
 
 
@@ -29,14 +36,12 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
     lateinit var  postalCode : EditText
 
 
-    private lateinit var locationManager: LocationManager
-
 
     private lateinit var CurrrentUser : User
 
 
-    val locationPermissionCode = 2
 
+    //Ok hhtp client , used to Fetch and retrieve Rest api data
     private val client = OkHttpClient()
 
 
@@ -52,30 +57,28 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
         //Initalizing of com.lambtonserviceon.models.User
          CurrrentUser = User()
 
+        //View button Initialization
+        Searchbtn = findViewById(R.id.Searchbtn)
+        postalCode = findViewById(R.id.Postal)
 
 
+        //Toggle btn for main acticity
         toggle = ActionBarDrawerToggle(this , drawerlayout , R.string.open , R.string.close)
         drawerlayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
-
-        //hamburger menu button
+        //hamburger menu button listener
         navView.setNavigationItemSelectedListener {
 
             when(it.itemId){
 
-
                 R.id.miItem1 -> {
                     val intent = Intent(this, ProfileDetails::class.java)
-
-                startActivity(intent)
+                    startActivity(intent)
                 }
 
                 R.id.miItem2 -> {
-
-
 
                     val intent = Intent(this, paymentAct::class.java)
 
@@ -87,6 +90,8 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
                     Toast.makeText(this, "Dummy", Toast.LENGTH_SHORT).show()
                 }
 
+
+
             }
 
 
@@ -95,25 +100,15 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
 
 
-        Searchbtn = findViewById(R.id.Searchbtn)
 
 
-
-        postalCode = findViewById(R.id.Postal)
-
+        Searchbtn.setOnClickListener {
 
 
+            //calling zipLocation Api
+            this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
 
-        Searchbtn.setOnClickListener(this)
-
-
-
-
-
-
-        //this.getLocation()
-
-
+        }
 
 
 
@@ -130,10 +125,6 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-              //  checkPostalCode( postalCode.text.toString())
-
-
-
             }
         })
 
@@ -142,6 +133,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
 
 
+    //backbtn
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         if(toggle.onOptionsItemSelected(item)){
@@ -153,6 +145,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
 
 
+//function to check valid postal code
     fun checkPostalCode(postalCode:String){
 
         if ( postalCode == "" ) {
@@ -173,45 +166,21 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
 
 
-
-    override fun onClick(v: View?) {
-        when(v?.id ){
-
-            R.id.Searchbtn -> {
-
-                this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
-
-            }
-
-        }
-
-    }
-
-
+    //to fetch api zipcodes
     fun run(url: String) {
         val request = Request.Builder()
             .url(url)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
-
-
             override fun onFailure(call: Call, e: IOException) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-
-
             }
 
             override fun onResponse(call: Call, response: Response) {
 
                 val gson = Gson()
-
                 val mUser =  gson.fromJson(response.body?.string(), GetZipCode::class.java)
-
-//
-//                println( mUser.location[0].City)
-//               println(mUser.location[0].latitude)
-//                println(mUser.location[0].longitude)
 
 
                 CurrrentUser.CurrentLati = mUser.location[0].latitude
@@ -219,9 +188,7 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
 
 
                 runOnUiThread {
-//
-//                    println("sent" + CurrrentUser.lati)
-//                    println( CurrrentUser.longi)
+
 
                 val intent = Intent(this@MainActivity, rideDetails::class.java)
                     intent.putExtra("com.lambtonserviceon.models.User" , CurrrentUser )
@@ -236,74 +203,6 @@ class MainActivity : AppCompatActivity() ,  View.OnClickListener {
         )
 
     }
-
-
-
-
-
-
-
-//    private fun getLocation( ) {
-//
-//
-//        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-//            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
-//        }
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
-//
-//
-//
-//
-//    }
-//
-//
-//    override fun onLocationChanged(location: Location) {
-////
-////        this.CurrrentUser.lati = location.latitude.toString()
-////        this.CurrrentUser.longi =  location.longitude.toString()
-//
-//      //  Toast.makeText(this, "Latitude: " + location.latitude.toString() + " , Longitude: " + location.longitude.toString(), Toast.LENGTH_SHORT).show()
-//
-//
-//    }
-//
-//    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun onProviderEnabled(provider: String?) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun onProviderDisabled(provider: String?) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-//        if (requestCode == locationPermissionCode) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
-//            }
-//            else {
-//                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

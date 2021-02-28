@@ -34,7 +34,8 @@ class ProfileDetails : AppCompatActivity() {
     var imgData : String = ""
     lateinit var Updatebtn :Button
 
-    private lateinit var wordViewModel: userDeatailsViewModel
+    private lateinit var UserDetailsViewModel: userDeatailsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_details)
@@ -47,35 +48,33 @@ class ProfileDetails : AppCompatActivity() {
            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1)
 
 
+
         imageView = findViewById(R.id.Dispic)
 
 
 
-        wordViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
+        UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
 
 
 
 
-        this.setupActionBarBtn()
-
-         button = findViewById(R.id.dpBtn)
-        button.setText("+");
 
 
-        button.setOnClickListener {
-
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-           startActivityForResult(cameraIntent  , 1)
+          button = findViewById(R.id.dpBtn)
+         button.setText("+");
+         button.setOnClickListener {
 
 
+             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(cameraIntent  , 1)
 
         }
 
 
 
 
+        //initialization of view buttons
         saveBtn = findViewById(R.id.savebtn)
         firstName = findViewById(R.id.firstName)
         lastName = findViewById(R.id.lastName)
@@ -89,28 +88,16 @@ class ProfileDetails : AppCompatActivity() {
             val firstname = firstName.text.toString()
             val lastname = lastName.text.toString()
 
-
-
-
-
-
             val userDetails = UserDetails(0,firstname,lastname,imgData)
 
-            wordViewModel.insert(userDetails)
-
-
+            UserDetailsViewModel.insert(userDetails)
 
         }
 
 
         updatebtn.setOnClickListener {
-
-
             val intent = Intent(this, updateUserDetails::class.java)
-
             startActivity(intent)
-
-
 
         }
 
@@ -118,56 +105,24 @@ class ProfileDetails : AppCompatActivity() {
 
 
 
-        wordViewModel.alldata.observe(this, Observer { words ->
-            // Update the cached copy of the words in the adapter.
-            words?.let {
+
+        this.setUpUserDetails()
+        this.setupActionBarBtn()
 
 
-                if(it.size !=0){
-
-
-
-                    firstName.setText(it[0].FirstName)
-                    lastName.setText(it[0].LastNmae)
-
-
-
-
-                    val imgData = it[0].UserImg
-                    val k =  Base64.decode(imgData,Base64.DEFAULT)
-                    val image = BitmapFactory.decodeByteArray(k, 0, k.size)
-
-                    button.visibility = View.INVISIBLE
-                    imageView.setImageBitmap(image)
-
-
-
-                    saveBtn.visibility = View.INVISIBLE
-
-
-
-
-                }else{
-
-                    updatebtn.visibility = View.INVISIBLE
-                    println("user database is empty ")
-
-                }
-
-            }
-        })
 
 
 
 
     }
 
+
+
+
+    //Starting camera activity on result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1) {
-
-            Toast.makeText(applicationContext , "hellowowld" ,  Toast.LENGTH_LONG).show()
-
 
             button.visibility = View.INVISIBLE
 
@@ -185,18 +140,8 @@ class ProfileDetails : AppCompatActivity() {
 
             imgData = encoded
 
-
-
-
-
-
         }
     }
-
-
-
-
-
 
 
 
@@ -209,8 +154,6 @@ class ProfileDetails : AppCompatActivity() {
         //set back button
         actionbar!!.setDisplayHomeAsUpEnabled(true)
 
-
-
     }
 
 
@@ -218,6 +161,44 @@ class ProfileDetails : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+
+
+    private  fun setUpUserDetails(){
+
+
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
+
+
+                if(it.size !=0){
+
+                    firstName.setText(it[0].FirstName)
+                    lastName.setText(it[0].LastNmae)
+
+                    val imgData = it[0].UserImg
+                    val k =  Base64.decode(imgData,Base64.DEFAULT)
+                    val image = BitmapFactory.decodeByteArray(k, 0, k.size)
+
+                    button.visibility = View.INVISIBLE
+                    imageView.setImageBitmap(image)
+                    saveBtn.visibility = View.INVISIBLE
+
+
+                }else{
+
+                    updatebtn.visibility = View.INVISIBLE
+                    println("user database is empty ")
+
+                }
+
+            }
+        })
+
+
+
     }
 
 }

@@ -1,4 +1,5 @@
 package com.lambtonserviceon
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,10 +20,18 @@ import java.io.IOException
 
 
 
+//User
 private lateinit var CurrrentUser : User
+
+//Okhttp client
 private val client = OkHttpClient()
+//polyLine from google
 private lateinit var  decodedPolyLine : List <LatLng>
+
+//Google map initialization
 private lateinit var mMap: GoogleMap
+
+
 private lateinit var myMarker: Marker
 
 class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClickListener {
@@ -34,22 +43,19 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         setContentView(R.layout.activity_map)
 
 
-
-
-        this.title = "Maps"
-
-
+        //setting up current user from Main activity
         CurrrentUser = intent.getParcelableExtra("User")
 
 
+        //setting up Googlemap
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
+        //back btn setup
         this.setupActionBarBtn()
     }
 
-
+    //backPressSupporting function
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -59,7 +65,7 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
     fun setupActionBarBtn(){
 
-        this.title = "MapAct"
+        this.title = "Map"
         val actionbar = supportActionBar
         //set back button
         actionbar!!.setDisplayHomeAsUpEnabled(true)
@@ -72,16 +78,17 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         mMap = googleMap
         mMap.clear()
 
-        var DestinationAnontation = LatLng(
-            CurrrentUser.DestinationLati.toDouble(),
-            CurrrentUser.Destinationlongi.toDouble())
+        //Destination location
+        var DestinationAnontation = LatLng(CurrrentUser.DestinationLati.toDouble(), CurrrentUser.Destinationlongi.toDouble())
 
-        var PERTH = LatLng(CurrrentUser.CurrentLati.toDouble(), CurrrentUser.CurrentLongi.toDouble())
+        //Current location
+        var currentLocation = LatLng(CurrrentUser.CurrentLati.toDouble(), CurrrentUser.CurrentLongi.toDouble())
 
 
-        mMap?.animateCamera(CameraUpdateFactory.newLatLng(PERTH))
-        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(PERTH, 10f))
-        myMarker = mMap.addMarker(MarkerOptions().position(PERTH).title("hey you are here"))
+
+        mMap?.animateCamera(CameraUpdateFactory.newLatLng(currentLocation))
+        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+        myMarker = mMap.addMarker(MarkerOptions().position(currentLocation).title("hey you are here"))
         myMarker.showInfoWindow()
 
 
@@ -89,10 +96,10 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
             mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
 
 
+        //build Url to fetch google api
+        val url = getURL(currentLocation, DestinationAnontation)
 
-        val url = getURL(PERTH, DestinationAnontation)
-
-
+        //okHttp fetch  to get polyLine between destination and current user
         this.run(url)
 
     }
@@ -102,7 +109,7 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
+    //build Url to fetch google api
     private fun getURL(from: LatLng, to: LatLng): String {
 
         val origin = "origin=" + from.latitude + "," + from.longitude
@@ -111,10 +118,7 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         val params = "$origin&$dest"
         val key = "&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc"
 
-
-        println("https://maps.googleapis.com/maps/api/directions/json?$params$key")
         return "https://maps.googleapis.com/maps/api/directions/json?$params$key"
-
 
     }
 
@@ -139,8 +143,9 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
                 val gson = Gson()
                 var Direction2 = gson.fromJson(response.body?.string(), Direction::class.java)
 
-                println("helloworld.............")
-                println(Direction2.routes[0].legs[0].steps)
+
+
+                //function to fetch steps and pass to ADD polyline
                 addPolyLines(Direction2.routes[0].legs[0].steps)
             }
 
@@ -153,13 +158,7 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
         for (step in steps) {
              decodedPolyLine = PolyUtil.decode(step.polyline.points);
-
-
-            println("hellowowlr-------")
-            println(decodedPolyLine)
             path.add( decodedPolyLine)
-
-
 
         }
 
@@ -168,12 +167,14 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
         runOnUiThread {
 
-           val  polyopt = PolylineOptions()
+           val  polyLineOption = PolylineOptions()
+
+            polyLineOption.color(Color.GREEN)
 
             for(p in path)
-            polyopt.addAll(p)
+            polyLineOption.addAll(p)
 
-            val polyline = mMap.addPolyline(polyopt)
+            val polyline = mMap.addPolyline(polyLineOption)
 
         }
 

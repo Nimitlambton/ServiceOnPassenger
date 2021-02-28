@@ -11,12 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 import androidx.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_profile_details.*
+
 
 class paymentAct : AppCompatActivity() {
 
 
-    private lateinit var wordViewModel: cardDetailsViewMOdel
+    private lateinit var CardDetailsViewModel: cardDetailsViewMOdel
+
+    //View Elements
     private lateinit var saveBtn : Button
     private lateinit var cardno :EditText
     private lateinit var expiryno :EditText
@@ -30,17 +32,84 @@ class paymentAct : AppCompatActivity() {
 
 
 
-        wordViewModel = ViewModelProvider(this).get(cardDetailsViewMOdel::class.java)
+        CardDetailsViewModel = ViewModelProvider(this).get(cardDetailsViewMOdel::class.java)
 
 
-
+        //initializing view model with respective ids
         cardno = findViewById(R.id.cardno)
         expiryno = findViewById(R.id.expiryDate)
         update = findViewById(R.id.updateCardBtn)
+        saveBtn = findViewById(R.id.savebtn)
 
 
 
-        wordViewModel.alldata.observe(this, Observer { words ->
+
+
+        //initialize  user data
+        this.SetUserDetails()
+
+       this.setupActionBarBtn()
+
+
+
+       //saves User details if the user setting is not setup
+
+        saveBtn.setOnClickListener {
+
+
+            if  (cardno.text.toString() == "" || expiryno.text.toString() == "" ) {
+
+
+                Toast.makeText(this, "please enter card details", Toast.LENGTH_SHORT).show()
+            }else {
+                val cardNumber = cardno.text.toString().toDouble()
+                val expiryNumber =  expiryno.text.toString().toInt()
+
+                var cardDetails  = CardDetails(0, cardNumber, expiryNumber)
+
+                CardDetailsViewModel.insert(cardDetails)
+
+                println("dataSaved")
+
+            }
+
+        }
+
+        //updated user card details if the card details is not setuped
+
+        update.setOnClickListener {
+
+            val intent = Intent(this, updateCardDetails::class.java)
+            startActivity(intent)
+
+        }
+
+
+
+    }
+
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+
+    fun setupActionBarBtn(){
+
+        this.title = "Payment"
+        val actionbar = supportActionBar
+        //set back button
+        actionbar!!.setDisplayHomeAsUpEnabled(true)
+
+
+    }
+
+    //function to initialize user
+    private  fun SetUserDetails(){
+
+        CardDetailsViewModel.alldata.observe(this, Observer { words ->
             // Update the cached copy of the words in the adapter.
             words?.let {
 
@@ -51,94 +120,14 @@ class paymentAct : AppCompatActivity() {
                     expiryno.setText(it[0].cvv.toString())
 
                     saveBtn.visibility = View.INVISIBLE
-                   // update.visibility = in
 
                 }else{
 
                     update.visibility = View.INVISIBLE
-                    println("user database is empty ")
-
-
-
 
                 }
-
             }
         })
-
-
-
-
-       this.setupActionBarBtn()
-
-
-        saveBtn = findViewById(R.id.savebtn)
-
-        saveBtn.setOnClickListener {
-
-
-
-
-
-
-            if  (cardno.text.toString() == "" || expiryno.text.toString() == "" ) {
-
-
-                Toast.makeText(this, "please enter card details", Toast.LENGTH_SHORT).show()
-
-
-            }else {
-
-
-
-                val cardNumber = cardno.text.toString().toDouble()
-                val expiryNumber =  expiryno.text.toString().toInt()
-
-                var cardDetails  = CardDetails(0, cardNumber, expiryNumber)
-
-                wordViewModel.insert(cardDetails)
-
-                println("dataSaved")
-
-            }
-
-
-
-
-        }
-
-
-
-        update.setOnClickListener {
-
-
-            val intent = Intent(this, updateCardDetails::class.java)
-
-            startActivity(intent)
-
-
-
-        }
-
-
-
-    }
-
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
-
-
-
-    fun setupActionBarBtn(){
-
-        this.title = "Payment"
-        val actionbar = supportActionBar
-        //set back button
-        actionbar!!.setDisplayHomeAsUpEnabled(true)
-
 
     }
 

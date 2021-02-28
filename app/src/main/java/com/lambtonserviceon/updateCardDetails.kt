@@ -1,21 +1,24 @@
 package com.lambtonserviceon
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import androidx.lifecycle.Observer
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
-import kotlinx.android.synthetic.main.activity_payment.view.*
 
 class updateCardDetails : AppCompatActivity() {
-    private lateinit var wordViewModel: cardDetailsViewMOdel
-
+    private lateinit var CardDetailsViewMOdel: cardDetailsViewMOdel
     var Id :Int = 0
+
+    //setting up  view Elements
+    private lateinit var cardnumber : EditText
+    private lateinit var cvv : EditText
+    private lateinit var updatebtn :Button
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,26 +28,47 @@ class updateCardDetails : AppCompatActivity() {
         this.title = "updateDetails"
 
 
-        val cardnumber : EditText
-        val cvv :       EditText
-        val updatebtn :Button
 
-
-
-
-
+        //finding view by ID
         cardnumber = findViewById(R.id.cardno)
         cvv = findViewById(R.id.cvv)
         updatebtn = findViewById(R.id.updatebtn)
 
 
-        wordViewModel = ViewModelProvider(this).get(cardDetailsViewMOdel::class.java)
+
+       //ViewModel initialization
+        CardDetailsViewMOdel = ViewModelProvider(this).get(CardDetailsViewMOdel::class.java)
 
 
 
-        wordViewModel.alldata.observe(this, Observer { words ->
+        this.setupUpdateElements()
+
+
+        updatebtn.setOnClickListener {
+
+
+            val cardNumber = cardnumber.text.toString().toDouble()
+            val expiryNumber =  cvv.text.toString().toInt()
+            var cardDetails  = CardDetails(this.Id, cardNumber, expiryNumber)
+
+            CardDetailsViewMOdel.update(cardDetails)
+
+            println("dataupdated")
+
+             finish()
+
+        }
+
+
+
+    }
+
+
+    private fun setupUpdateElements(){
+
+        CardDetailsViewMOdel.alldata.observe(this, Observer { card ->
             // Update the cached copy of the words in the adapter.
-            words?.let {
+            card?.let {
 
 
 
@@ -58,51 +82,15 @@ class updateCardDetails : AppCompatActivity() {
 
                     )
 
-                     Id = it[0].cardId
-
-
-
+                    Id = it[0].cardId
 
                 }else{
-
-
                     println("user database is empty ")
-
-
-
 
                 }
 
             }
         })
-
-
-
-
-        updatebtn.setOnClickListener {
-
-
-
-
-            val cardNumber = cardnumber.text.toString().toDouble()
-           val expiryNumber =  cvv.text.toString().toInt()
-
-            var cardDetails  = CardDetails(this.Id, cardNumber, expiryNumber)
-
-            wordViewModel.update(cardDetails)
-
-            println("dataupdated")
-
-
-
-             finish()
-
-
-
-
-
-        }
-
 
 
     }
