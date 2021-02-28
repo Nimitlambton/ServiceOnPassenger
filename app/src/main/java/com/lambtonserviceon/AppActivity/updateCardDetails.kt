@@ -1,4 +1,4 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import androidx.lifecycle.Observer
+import com.lambtonserviceon.R
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 
 class updateCardDetails : AppCompatActivity() {

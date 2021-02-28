@@ -1,7 +1,8 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.lambtonserviceon.R
 
 class ConfirmRide : AppCompatActivity() {
 

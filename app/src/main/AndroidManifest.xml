@@ -22,14 +22,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".updateUserDetails"></activity>
-        <activity android:name=".updateCardDetails" />
-        <activity android:name=".enRouteDriver" />
-        <activity android:name=".ConfirmRide" />
-        <activity android:name=".MapAct" />
-        <activity android:name=".rideDetails" />
-        <activity android:name=".paymentAct" />
-        <activity android:name=".ProfileDetails" />
+        <activity android:name=".AppActivity.updateUserDetails"></activity>
+        <activity android:name=".AppActivity.updateCardDetails" />
+        <activity android:name=".AppActivity.enRouteDriver" />
+        <activity android:name=".AppActivity.ConfirmRide" />
+        <activity android:name=".AppActivity.MapAct" />
+        <activity android:name=".AppActivity.rideDetails" />
+        <activity android:name=".AppActivity.paymentAct" />
+        <activity android:name=".AppActivity.ProfileDetails" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 import androidx.lifecycle.Observer
+import com.lambtonserviceon.R
 
 
 class paymentAct : AppCompatActivity() {

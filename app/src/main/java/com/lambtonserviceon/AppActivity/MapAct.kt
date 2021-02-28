@@ -1,4 +1,4 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
+import com.lambtonserviceon.R
 import com.lambtonserviceon.models.User
 import com.lambtonserviceon.models.directions.Direction
 import com.lambtonserviceon.models.directions.Step
@@ -158,7 +159,7 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
         for (step in steps) {
              decodedPolyLine = PolyUtil.decode(step.polyline.points);
-            path.add( decodedPolyLine)
+            path.add(decodedPolyLine)
 
         }
 

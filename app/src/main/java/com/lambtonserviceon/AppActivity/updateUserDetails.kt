@@ -1,4 +1,4 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.lambtonserviceon.R
 import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import kotlinx.android.synthetic.main.activity_update_user_details.*

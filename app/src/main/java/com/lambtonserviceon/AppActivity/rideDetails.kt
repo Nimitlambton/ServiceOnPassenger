@@ -1,4 +1,4 @@
-package com.lambtonserviceon
+package com.lambtonserviceon.AppActivity
 
 
 import android.content.Intent
@@ -8,10 +8,8 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.example.Example
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.lambtonserviceon.R
 import com.lambtonserviceon.models.User
 import okhttp3.*
 import java.io.IOException
@@ -46,17 +44,27 @@ class rideDetails : AppCompatActivity() {
 
 //matching View with there ID
         mapbtn = findViewById(R.id.Map)
-        Destination = findViewById(R.id.destination)
-        Distance = findViewById(R.id.distance)
-        EstimatedPrice = findViewById(R.id.EstimatedPrice)
-        confirmRidebtn = findViewById(R.id.ConfirmRide)
+        Destination = findViewById(
+            R.id.destination
+        )
+        Distance = findViewById(
+            R.id.distance
+        )
+        EstimatedPrice = findViewById(
+            R.id.EstimatedPrice
+        )
+        confirmRidebtn = findViewById(
+            R.id.ConfirmRide
+        )
 
 
         mapbtn.setOnClickListener {
 
 
             var intent = Intent( this , MapAct::class.java)
-            intent.putExtra( "User"  ,  CurrrentUser  )
+            intent.putExtra( "User"  ,
+                CurrrentUser
+            )
             startActivity(intent)
         }
 
@@ -65,7 +73,9 @@ class rideDetails : AppCompatActivity() {
 
 
             var intent = Intent( this , ConfirmRide::class.java)
-            intent.putExtra( "User"  ,  CurrrentUser  )
+            intent.putExtra( "User"  ,
+                CurrrentUser
+            )
             startActivity(intent)
 
 
@@ -152,7 +162,8 @@ class rideDetails : AppCompatActivity() {
 
                 //setting up on ui thats why runing on diffrent thread of UI
                 runOnUiThread{
-                    Destination.setText(CurrrentUser.Destination )
+                    Destination.setText(
+                        CurrrentUser.Destination )
                     Distance.setText(distance.toString() + "   KM")
                     EstimatedPrice.setText("$ ${fare.toString()}")
 
