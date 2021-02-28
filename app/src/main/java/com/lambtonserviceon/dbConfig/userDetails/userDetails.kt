@@ -11,6 +11,8 @@ class UserDetails(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name="cardId") val UserId:Int,
     @ColumnInfo(name="FirstName") val FirstName:String,
     @ColumnInfo(name="LastName") val LastNmae:String,
+    @ColumnInfo(name="Email") val Email:String,
+    @ColumnInfo(name="Password") val Password:String,
     @ColumnInfo(name="UserImg") val UserImg:String
 
     )

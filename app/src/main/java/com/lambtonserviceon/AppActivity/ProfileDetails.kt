@@ -57,10 +57,6 @@ class ProfileDetails : AppCompatActivity() {
 
 
 
-
-
-
-
           button = findViewById(R.id.dpBtn)
          button.setText("+");
          button.setOnClickListener {
@@ -88,7 +84,7 @@ class ProfileDetails : AppCompatActivity() {
             val firstname = firstName.text.toString()
             val lastname = lastName.text.toString()
 
-            val userDetails = UserDetails(0,firstname,lastname,imgData)
+            val userDetails = UserDetails(0,firstname,lastname,"dummy" , "dummy", imgData)
 
             UserDetailsViewModel.insert(userDetails)
 

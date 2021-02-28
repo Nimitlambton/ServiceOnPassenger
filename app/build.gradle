@@ -121,8 +121,6 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
 
 
-
-
     // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
 

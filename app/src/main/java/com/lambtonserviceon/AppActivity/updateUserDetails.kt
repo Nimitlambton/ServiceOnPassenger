@@ -43,7 +43,7 @@ class updateUserDetails : AppCompatActivity() {
 
         this.title = "update user details "
 
-        firstName = findViewById(R.id.FirstName)
+        firstName = findViewById(R.id.firstname)
         lastname = findViewById(R.id.LastName)
 
         changeBtn = findViewById(R.id.changebtn)
@@ -61,14 +61,16 @@ class updateUserDetails : AppCompatActivity() {
         updatebtn.setOnClickListener {
 
 
-            var firstname = FirstName.text.toString()
+            var firstname = firstname.text.toString()
             var lastname = LastName.text.toString()
-            val userDetails = UserDetails(Id,firstname,lastname,imgData)
+            val userDetails = UserDetails(Id,firstname,lastname,"dummy" , "dummy" , imgData)
 
             UserDetailsViewModel.update(userDetails)
             finish()
 
         }
+
+
 
 
 

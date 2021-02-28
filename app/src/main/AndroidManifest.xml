@@ -22,7 +22,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AppActivity.updateUserDetails"></activity>
+        <activity android:name=".LoginActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+
+
+        <activity android:name=".RegisterActivity">
+
+        </activity>
+        <activity android:name=".AppActivity.updateUserDetails" />
         <activity android:name=".AppActivity.updateCardDetails" />
         <activity android:name=".AppActivity.enRouteDriver" />
         <activity android:name=".AppActivity.ConfirmRide" />
@@ -30,13 +44,7 @@
         <activity android:name=".AppActivity.rideDetails" />
         <activity android:name=".AppActivity.paymentAct" />
         <activity android:name=".AppActivity.ProfileDetails" />
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".MainActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

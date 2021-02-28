@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = arrayOf(UserDetails::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(UserDetails::class), version = 2, exportSchema = false)
 
 abstract  class  userDeatilsDatabase :RoomDatabase () {
 
@@ -26,7 +26,7 @@ abstract  class  userDeatilsDatabase :RoomDatabase () {
             INSTANCE?.let { database ->
                 scope.launch {
 
-                    var fee = database.userDeatilsDao()
+                    var user = database.userDeatilsDao()
                     // Delete all content here.
                      // fee.deleteAll()
 
