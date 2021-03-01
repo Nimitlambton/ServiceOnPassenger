@@ -90,7 +90,6 @@ class ProfileDetails : AppCompatActivity() {
 
         }
 
-
         updatebtn.setOnClickListener {
             val intent = Intent(this, updateUserDetails::class.java)
             startActivity(intent)

@@ -14,8 +14,6 @@ class userDetailsRepo(private val userDetailsDao: userDetailsDao ) {
         userDetailsDao.insert(user)
     }
 
-    val allData: LiveData<List<UserDetails>> = userDetailsDao.getalldata()
-
     suspend fun update(user : UserDetails) {
 
         userDetailsDao.update(user)
@@ -23,6 +21,7 @@ class userDetailsRepo(private val userDetailsDao: userDetailsDao ) {
     }
 
 
+    val allData: LiveData<List<UserDetails>> = userDetailsDao.getalldata()
 
 
 

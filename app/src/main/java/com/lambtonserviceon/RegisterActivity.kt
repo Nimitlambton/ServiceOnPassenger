@@ -9,12 +9,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import com.lambtonserviceon.dbConfig.userDetails.UserDetails
+import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import kotlinx.android.synthetic.main.activity_register.*
 import java.io.ByteArrayOutputStream
 
@@ -30,6 +30,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var imageView: ImageView
     var imgData = ""
 
+    private lateinit var UserDetailsViewModel: userDeatailsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -41,7 +42,7 @@ class RegisterActivity : AppCompatActivity() {
 
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1)
 
-
+        UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
 
         login  = findViewById(R.id.login)
@@ -72,12 +73,8 @@ class RegisterActivity : AppCompatActivity() {
 
         SetImageBtn.setOnClickListener {
 
-
-
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(cameraIntent  , 1)
-
-
 
 
         }
@@ -92,8 +89,7 @@ class RegisterActivity : AppCompatActivity() {
             val email = this.Email.text.toString()
             val password = this.Password.text.toString()
 
-         println(firstname + lastname + password + email   )
-
+         save(firstname , lastname , password ,email , imgData)
 
 
         }
@@ -102,6 +98,69 @@ class RegisterActivity : AppCompatActivity() {
 
 
 
+
+
+    }
+
+
+    private fun  save(firstname :String  , lastname:String  ,  password : String  ,  email : String ,  imgData:  String  ){
+
+        if (firstname==""){
+
+            Toast.makeText(this , "Enter name" ,Toast.LENGTH_LONG).show()
+
+
+             return
+        }else if (lastname == ""){
+
+            Toast.makeText(this , "Enter last name" ,Toast.LENGTH_LONG).show()
+
+
+            return
+
+        }
+        else if  (password == "") {
+
+            Toast.makeText(this , "Enter password" ,Toast.LENGTH_LONG).show()
+
+
+            return
+
+        }
+        else if ( email == "") {
+
+            Toast.makeText(this , "Enter Email" ,Toast.LENGTH_LONG).show()
+
+
+            return
+
+        }
+        else if ( imgData == "") {
+
+            Toast.makeText(this , " please select image" ,Toast.LENGTH_LONG).show()
+
+
+            return
+
+        }else {
+
+
+            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData)
+
+            UserDetailsViewModel.insert(userDetails)
+
+
+            Toast.makeText(this , "YAYA! You are finally registered ..!!" ,Toast.LENGTH_LONG).show()
+
+            finish()
+
+
+
+
+
+
+
+        }
 
 
 

@@ -22,8 +22,9 @@ class userDeatailsViewModel(application: Application) : AndroidViewModel(applica
 
     val alldata: LiveData<List<UserDetails>>
 
-    init {
 
+
+    init {
 
 
 
@@ -32,6 +33,8 @@ class userDeatailsViewModel(application: Application) : AndroidViewModel(applica
         repository = userDetailsRepo(FeeDao)
 
         alldata = repository.allData
+
+
 
 
     }
@@ -50,6 +53,9 @@ class userDeatailsViewModel(application: Application) : AndroidViewModel(applica
 
         repository.update(User)
     }
+
+
+
 
 
 }
