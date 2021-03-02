@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="@+id/Postal" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/maint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="108dp"
@@ -48,7 +48,7 @@
             android:hint="Enter postal Code"
             android:inputType="textPersonName"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/maint" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

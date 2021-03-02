@@ -24,9 +24,15 @@ class LoginActivity : AppCompatActivity() {
     lateinit var  password :EditText
     lateinit var loginBtn :Button
     lateinit var createAccount : TextView
+
+
+
     private lateinit var UserDetailsViewModel: userDeatailsViewModel
     private lateinit var  currentUsers :  List<UserDetails>
     private lateinit var  currentUser :  UserDetails
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -42,11 +48,12 @@ class LoginActivity : AppCompatActivity() {
 
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
+
+
         createAccount.setOnClickListener {
 
             val goto = Intent(this, RegisterActivity::class.java)
             startActivity(goto)
-
 
 
         }
@@ -64,7 +71,6 @@ class LoginActivity : AppCompatActivity() {
 
             }
 
-
         })
 
         loginBtn.setOnClickListener {
@@ -76,8 +82,8 @@ class LoginActivity : AppCompatActivity() {
             this.login(emailtxt , passtxt )
 
 
-
         }
+
 
 
 
@@ -96,28 +102,30 @@ class LoginActivity : AppCompatActivity() {
         }else if (password == ""){
             Toast.makeText(this,"please enter password" ,Toast.LENGTH_SHORT).show()
             return
-        }else{
+        }else
 
-
-
-        //    Toast.makeText(this,email + password ,Toast.LENGTH_SHORT).show()
-
+        {
 
             currentUsers.map {
-
-
-
                if ( it.Email.equals(email)  && it.Password.equals(password) ){
 
                    this.currentUser  = it
 
-                   Toast.makeText(this,"you are logged in " ,Toast.LENGTH_SHORT).show()
-            
+
+                   finish()
+
+                   val goto = Intent(this , MainActivity::class.java)
+                   goto.putExtra("userdetails" , this.currentUser )
+                   startActivity(goto)
+
+
+                   Toast.makeText(this,"Login in ..." ,Toast.LENGTH_SHORT).show()
 
 
                }else {
 
-                       Toast.makeText(this,"User does not exist , please Sign up!!" ,Toast.LENGTH_SHORT).show()
+
+                   Toast.makeText(this,"User does not exist , please Sign up!!" ,Toast.LENGTH_SHORT).show()
 
 
                }
@@ -125,13 +133,7 @@ class LoginActivity : AppCompatActivity() {
 
             }
 
-
-
-
-
-
         }
-
 
 
 

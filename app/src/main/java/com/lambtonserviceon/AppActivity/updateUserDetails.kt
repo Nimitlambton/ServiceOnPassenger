@@ -33,27 +33,24 @@ class updateUserDetails : AppCompatActivity() {
 
     var Id :Int = 0
 
-
+    private lateinit var  currentUsers :  List<UserDetails>
+    private lateinit var cu : UserDetails
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_user_details)
 
+        cu = intent.getParcelableExtra("userdetails")
 
 
         this.title = "update user details "
 
         firstName = findViewById(R.id.firstname)
         lastname = findViewById(R.id.LastName)
-
         changeBtn = findViewById(R.id.changebtn)
-
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
-
         Img = findViewById(R.id.img)
-
         update = findViewById(R.id.updatebtn)
-
 
 
 
@@ -63,10 +60,27 @@ class updateUserDetails : AppCompatActivity() {
 
             var firstname = firstname.text.toString()
             var lastname = LastName.text.toString()
-            val userDetails = UserDetails(Id,firstname,lastname,"dummy" , "dummy" , imgData)
 
-            UserDetailsViewModel.update(userDetails)
-            finish()
+            if (imgData == ""){
+
+
+                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password ,imgData)
+
+                UserDetailsViewModel.update(userDetails)
+                finish()
+
+            }else {
+
+                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password , cu.UserImg)
+
+                UserDetailsViewModel.update(userDetails)
+                finish()
+
+
+            }
+
+
+
 
         }
 
@@ -97,13 +111,10 @@ class updateUserDetails : AppCompatActivity() {
             val photo: Bitmap = data?.extras?.get("data") as Bitmap
             this.Img.setImageBitmap(photo)
 
-
             val byteArrayOutputStream =
                 ByteArrayOutputStream()
             photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
             val byteArray = byteArrayOutputStream.toByteArray()
-
-
             val encoded: String = Base64.encodeToString(byteArray, Base64.DEFAULT)
             imgData = encoded
 
@@ -115,46 +126,39 @@ class updateUserDetails : AppCompatActivity() {
 
 
 
-    private fun setupUpdaterElements(){
+    private fun setupUpdaterElements() {
 
 
         UserDetailsViewModel.alldata.observe(this, Observer { words ->
             // Update the cached copy of the words in the adapter.
             words?.let {
 
+                currentUsers = it
+
+                currentUsers.map {
+
+                    if (cu.UserId == it.UserId) {
+
+                        firstName.setText(it.FirstName)
+                        lastname.setText(it.LastNmae)
 
 
-                if(it.size !=0){
+                        val imgData = it.UserImg
 
-                    firstName.setText(it[0].FirstName)
+                        val k = Base64.decode(imgData, Base64.DEFAULT)
+                        val image = BitmapFactory.decodeByteArray(k, 0, k.size)
+                        Img.setImageBitmap(image)
 
+                    } else {
 
-                    lastname.setText(it[0].LastNmae)
+                        println("user database is empty ")
 
-                    //Id = it[0].cardId
-
-                    val imgData = it[0].UserImg
-                    val k =  Base64.decode(imgData, Base64.DEFAULT)
-                    val image = BitmapFactory.decodeByteArray(k, 0, k.size)
-
-                    this.Img.setImageBitmap(image)
-
-                    Id = it[0].UserId
-
-
-                }else{
-
-                    println("user database is empty ")
-
+                    }
 
                 }
-
             }
         })
+
+
     }
-
-
-
-
-
 }

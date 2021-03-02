@@ -28,7 +28,8 @@ class updateCardDetails : AppCompatActivity() {
 
         this.title = "updateDetails"
 
-
+//ViewModel initialization
+        CardDetailsViewMOdel = ViewModelProvider(this).get(cardDetailsViewMOdel::class.java)
 
         //finding view by ID
         cardnumber = findViewById(R.id.cardno)
@@ -37,8 +38,7 @@ class updateCardDetails : AppCompatActivity() {
 
 
 
-       //ViewModel initialization
-        CardDetailsViewMOdel = ViewModelProvider(this).get(CardDetailsViewMOdel::class.java)
+
 
 
 

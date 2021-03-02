@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 import androidx.lifecycle.Observer
 import com.lambtonserviceon.R
+import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 
 
 class paymentAct : AppCompatActivity() {
@@ -21,9 +23,10 @@ class paymentAct : AppCompatActivity() {
 
     //View Elements
     private lateinit var saveBtn : Button
-    private lateinit var cardno :EditText
-    private lateinit var expiryno :EditText
+    private lateinit var cardno :TextView
+    private lateinit var expiryno :TextView
     private lateinit var update :Button
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +44,6 @@ class paymentAct : AppCompatActivity() {
         expiryno = findViewById(R.id.expiryDate)
         update = findViewById(R.id.updateCardBtn)
         saveBtn = findViewById(R.id.savebtn)
-
-
-
 
 
         //initialize  user data

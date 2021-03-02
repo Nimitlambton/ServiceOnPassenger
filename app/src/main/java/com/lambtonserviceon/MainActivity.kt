@@ -9,17 +9,22 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.lambton.GetZipCode
 import com.lambtonserviceon.AppActivity.ProfileDetails
 import com.lambtonserviceon.AppActivity.paymentAct
 import com.lambtonserviceon.AppActivity.rideDetails
+import com.lambtonserviceon.dbConfig.userDetails.UserDetails
+import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import com.lambtonserviceon.models.User
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
+import androidx.lifecycle.Observer
 
 
 class MainActivity : AppCompatActivity()  {
@@ -29,11 +34,12 @@ class MainActivity : AppCompatActivity()  {
     lateinit  var toggle : ActionBarDrawerToggle
     lateinit var Searchbtn : Button
     lateinit var  postalCode : EditText
-
+    lateinit var  title  : TextView
 
 
     private lateinit var CurrrentUser : User
 
+    private lateinit var cu : UserDetails
 
 
     //Ok hhtp client , used to Fetch and retrieve Rest api data
@@ -41,12 +47,19 @@ class MainActivity : AppCompatActivity()  {
 
 
 
+    private lateinit var UserDetailsViewModel: userDeatailsViewModel
+    private lateinit var  currentUsers :  List<UserDetails>
+    private lateinit var  currentUser :  UserDetails
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
+
+        cu = intent.getParcelableExtra("userdetails")
 
 
         //Initalizing of com.lambtonserviceon.models.User
@@ -57,11 +70,49 @@ class MainActivity : AppCompatActivity()  {
         postalCode = findViewById(R.id.Postal)
 
 
-        //Toggle btn for main acticity
+        title = findViewById(R.id.maint)
+
+        //Toggle btn for main activity
         toggle = ActionBarDrawerToggle(this , drawerlayout , R.string.open , R.string.close)
         drawerlayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+        UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
+
+
+
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
+
+
+                currentUsers = it
+
+                println("helllllllooooworrllldd")
+                println("Size "+ currentUsers.size)
+
+
+
+
+                currentUsers.map {
+
+
+
+                    if(cu.UserId == it.UserId ){
+
+                        title.text = "welcome    " + it.FirstName
+
+                    }
+
+
+                }
+
+            }
+
+        })
+
 
         //hamburger menu button listener
         navView.setNavigationItemSelectedListener {
@@ -70,6 +121,7 @@ class MainActivity : AppCompatActivity()  {
 
                 R.id.miItem1 -> {
                     val intent = Intent(this, ProfileDetails::class.java)
+                    intent.putExtra("userdetails" , this.cu )
                     startActivity(intent)
                 }
 
@@ -85,16 +137,11 @@ class MainActivity : AppCompatActivity()  {
                     Toast.makeText(this, "Dummy", Toast.LENGTH_SHORT).show()
                 }
 
-
-
             }
 
 
             true
         }
-
-
-
 
 
         Searchbtn.setOnClickListener {
@@ -104,8 +151,6 @@ class MainActivity : AppCompatActivity()  {
             this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
 
         }
-
-
 
 
         postalCode.addTextChangedListener(object : TextWatcher {
@@ -123,9 +168,7 @@ class MainActivity : AppCompatActivity()  {
             }
         })
 
-
     }
-
 
 
     //backbtn
@@ -200,4 +243,10 @@ class MainActivity : AppCompatActivity()  {
     }
 
 
+
+    private fun hello(){
+
+
+
+    }
 }
