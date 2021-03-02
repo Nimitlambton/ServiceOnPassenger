@@ -217,8 +217,10 @@ class MainActivity : AppCompatActivity()  {
 
             override fun onResponse(call: Call, response: Response) {
 
+                //to Convert json to anroid or kotlin readable data we have to use Gson
                 val gson = Gson()
                 val mUser =  gson.fromJson(response.body?.string(), GetZipCode::class.java)
+
 
 
                 CurrrentUser.CurrentLati = mUser.location[0].latitude
