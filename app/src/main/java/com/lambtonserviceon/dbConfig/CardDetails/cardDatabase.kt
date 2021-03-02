@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
-@Database(entities = arrayOf(CardDetails::class), version = 3, exportSchema = false)
+@Database(entities = arrayOf(CardDetails::class), version = 4, exportSchema = false)
 
 abstract  class cardDatabase : RoomDatabase () {
 

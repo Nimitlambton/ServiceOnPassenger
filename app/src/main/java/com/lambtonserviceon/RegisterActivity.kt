@@ -76,7 +76,6 @@ class RegisterActivity : AppCompatActivity() {
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(cameraIntent  , 1)
 
-
         }
 
 
@@ -145,20 +144,10 @@ class RegisterActivity : AppCompatActivity() {
         }else {
 
 
-            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData)
-
+            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData , 0.0 , 0.0 , 0.0,0.0)
             UserDetailsViewModel.insert(userDetails)
-
-
             Toast.makeText(this , "YAYA! You are finally registered ..!!" ,Toast.LENGTH_LONG).show()
-
             finish()
-
-
-
-
-
-
 
         }
 

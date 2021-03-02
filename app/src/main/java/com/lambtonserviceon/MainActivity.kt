@@ -227,11 +227,21 @@ class MainActivity : AppCompatActivity()  {
                 CurrrentUser.CurrentLongi =  mUser.location[0].longitude
 
 
+                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, mUser.location[0].latitude.toDouble(),mUser.location[0].longitude.toDouble() , cu.DestinationLatititue , cu.DestinationLongitude)
+
+                UserDetailsViewModel.update(userDetails)
+
+
+
+
+
+
                 runOnUiThread {
 
 
                 val intent = Intent(this@MainActivity, rideDetails::class.java)
                     intent.putExtra("com.lambtonserviceon.models.User" , CurrrentUser )
+                    intent.putExtra("userDetails" , cu )
                 startActivity(intent)
 
                 }

@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.lambtonserviceon.R
+import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 import com.lambtonserviceon.models.User
 import com.lambtonserviceon.models.directions.Direction
 import com.lambtonserviceon.models.directions.Step
@@ -22,7 +23,7 @@ import java.io.IOException
 
 
 //User
-private lateinit var CurrrentUser : User
+
 
 //Okhttp client
 private val client = OkHttpClient()
@@ -35,6 +36,8 @@ private lateinit var mMap: GoogleMap
 
 private lateinit var myMarker: Marker
 
+private lateinit var cu : UserDetails
+
 class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClickListener {
 
 
@@ -45,7 +48,9 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
 
         //setting up current user from Main activity
-        CurrrentUser = intent.getParcelableExtra("User")
+
+
+        cu = intent.getParcelableExtra("UserDetails")
 
 
         //setting up Googlemap
@@ -80,10 +85,10 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         mMap.clear()
 
         //Destination location
-        var DestinationAnontation = LatLng(CurrrentUser.DestinationLati.toDouble(), CurrrentUser.Destinationlongi.toDouble())
+        var DestinationAnontation = LatLng(cu.DestinationLatititue, cu.DestinationLongitude.toDouble())
 
         //Current location
-        var currentLocation = LatLng(CurrrentUser.CurrentLati.toDouble(), CurrrentUser.CurrentLongi.toDouble())
+        var currentLocation = LatLng( cu.CurrentLatititue ,cu.currentLongitude)
 
 
 

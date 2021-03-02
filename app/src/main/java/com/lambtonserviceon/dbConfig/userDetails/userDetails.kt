@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
 
 
@@ -15,6 +16,9 @@ class UserDetails(
     @ColumnInfo(name="LastName") val LastNmae:String,
     @ColumnInfo(name="Email") val Email:String,
     @ColumnInfo(name="Password") val Password:String,
-    @ColumnInfo(name="UserImg") val UserImg:String
-
-    ) : Parcelable
+    @ColumnInfo(name="UserImg") val UserImg:String ,
+    @ColumnInfo(name="CurrentLatititue ") val CurrentLatititue:Double,
+    @ColumnInfo(name="currentLongitude ") val currentLongitude:Double,
+    @ColumnInfo(name="DestinationLatititue ") val DestinationLatititue:Double,
+    @ColumnInfo(name="DestinationLongitude ") val DestinationLongitude:Double
+ ) : Parcelable

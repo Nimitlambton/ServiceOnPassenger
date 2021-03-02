@@ -64,14 +64,14 @@ class updateUserDetails : AppCompatActivity() {
             if (imgData == ""){
 
 
-                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password ,imgData)
+                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password ,imgData , cu.CurrentLatititue , cu.currentLongitude  , cu.DestinationLatititue , cu.DestinationLongitude)
 
                 UserDetailsViewModel.update(userDetails)
                 finish()
 
             }else {
 
-                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password , cu.UserImg)
+                val userDetails = UserDetails(cu.UserId,firstname,lastname,cu.Email , cu.Password , cu.UserImg ,  cu.CurrentLatititue , cu.currentLongitude  , cu.DestinationLatititue , cu.DestinationLongitude)
 
                 UserDetailsViewModel.update(userDetails)
                 finish()

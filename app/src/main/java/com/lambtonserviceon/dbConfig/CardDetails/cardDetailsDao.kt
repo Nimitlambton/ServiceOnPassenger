@@ -2,8 +2,10 @@ package com.lambtonserviceon.dbConfig.CardDetails
 
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
-import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 
 
 @Dao
@@ -28,6 +30,7 @@ interface CardDetailsDao {
 
    @Update
    suspend fun update(card : CardDetails)
+
 
 
 }

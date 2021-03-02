@@ -7,9 +7,12 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.example.Example
 import com.google.gson.Gson
 import com.lambtonserviceon.R
+import com.lambtonserviceon.dbConfig.userDetails.UserDetails
+import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import com.lambtonserviceon.models.User
 import okhttp3.*
 import java.io.IOException
@@ -21,8 +24,9 @@ lateinit var  Destination : EditText
 lateinit var  Distance:  EditText
 lateinit var EstimatedPrice : EditText
 private lateinit var CurrrentUser : User
+private lateinit var cu : UserDetails
 
-
+private lateinit var UserDetailsViewModel: userDeatailsViewModel
 //initalizing of OKHttp Client
 private val client = OkHttpClient()
 
@@ -39,6 +43,13 @@ class rideDetails : AppCompatActivity() {
 
         //Initializing of user data from MainActivity
         CurrrentUser = intent.getParcelableExtra("com.lambtonserviceon.models.User")
+
+        cu = intent.getParcelableExtra("userDetails")
+
+
+
+
+        UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
 
 
@@ -62,9 +73,10 @@ class rideDetails : AppCompatActivity() {
 
 
             var intent = Intent( this , MapAct::class.java)
-            intent.putExtra( "User"  ,
-                CurrrentUser
-            )
+            intent.putExtra( "User"  , CurrrentUser)
+
+            intent.putExtra( "UserDetails"  , cu)
+
             startActivity(intent)
         }
 
@@ -83,7 +95,7 @@ class rideDetails : AppCompatActivity() {
 
 
          //google Places api to fetch data of the nearest Service Ontario
-        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${CurrrentUser.CurrentLati},${CurrrentUser.CurrentLongi}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
+        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${cu.CurrentLatititue},${cu.currentLongitude}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
 
     }
 
@@ -133,12 +145,23 @@ class rideDetails : AppCompatActivity() {
 
 
 
+
+
+
                 var lati =  places.results[0].geometry.location.lat
                 var longi = places.results[0].geometry.location.lng
 
                               //setting up lon & lat for the current user to send
+
+
+
                 CurrrentUser.DestinationLati = lati.toString()
                 CurrrentUser.Destinationlongi = longi.toString()
+
+                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude , places.results[0].geometry.location.lat , places.results[0].geometry.location.lng)
+
+                UserDetailsViewModel.update(userDetails)
+
 
 
                 //passing Destination location and the current location of the user
