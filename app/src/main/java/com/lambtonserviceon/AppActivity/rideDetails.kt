@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.example.Example
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.lambtonserviceon.R
 import com.lambtonserviceon.dbConfig.userDetails.UserDetails
@@ -23,15 +26,22 @@ lateinit var  confirmRidebtn :Button
 lateinit var  Destination : EditText
 lateinit var  Distance:  EditText
 lateinit var EstimatedPrice : EditText
-private lateinit var CurrrentUser : User
 private lateinit var cu : UserDetails
-
 private lateinit var UserDetailsViewModel: userDeatailsViewModel
 //initalizing of OKHttp Client
 private val client = OkHttpClient()
 
+
+private lateinit var  currentUsers :  List<UserDetails>
+
+
+
+
 class rideDetails : AppCompatActivity() {
 
+
+    var lati  = 0.0
+    var longi = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,60 +52,92 @@ class rideDetails : AppCompatActivity() {
         this.setupActionBarBtn()
 
         //Initializing of user data from MainActivity
-        CurrrentUser = intent.getParcelableExtra("com.lambtonserviceon.models.User")
-
-        cu = intent.getParcelableExtra("userDetails")
-
-
-
-
+        cu = intent.getParcelableExtra("userDetailsS")
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
 
 
 //matching View with there ID
         mapbtn = findViewById(R.id.Map)
-        Destination = findViewById(
-            R.id.destination
-        )
-        Distance = findViewById(
-            R.id.distance
-        )
-        EstimatedPrice = findViewById(
-            R.id.EstimatedPrice
-        )
-        confirmRidebtn = findViewById(
-            R.id.ConfirmRide
-        )
+        Destination = findViewById(R.id.destination)
+        Distance = findViewById(R.id.distance)
+        EstimatedPrice = findViewById(R.id.EstimatedPrice)
+        confirmRidebtn = findViewById(R.id.ConfirmRide)
 
 
         mapbtn.setOnClickListener {
 
 
+
+            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude ,lati,longi  )
+
+            UserDetailsViewModel.update(userDetails)
+
             var intent = Intent( this , MapAct::class.java)
-            intent.putExtra( "User"  , CurrrentUser)
-
             intent.putExtra( "UserDetails"  , cu)
-
             startActivity(intent)
+
         }
+
+
 
         confirmRidebtn.setOnClickListener {
 
 
 
+
+            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude , lati , longi)
+
+            UserDetailsViewModel.update(userDetails)
+
+
+            val db = Firebase.firestore
+
+            db.collection("ridedetails").document().set(cu)
+
             var intent = Intent( this , ConfirmRide::class.java)
-            intent.putExtra( "User"  ,
-                CurrrentUser
-            )
+
             startActivity(intent)
 
 
         }
 
 
-         //google Places api to fetch data of the nearest Service Ontario
-        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${cu.CurrentLatititue},${cu.currentLongitude}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
+
+                currentUsers = it
+
+//                println("Size "+ currentUsers.size)
+
+                currentUsers.map {
+
+
+                    if(cu.UserId == it.UserId ){
+
+
+
+                        println("hey this got updated")
+                        println( it.CurrentLatititue)
+                        println(it.currentLongitude)
+
+                        //google Places api to fetch data of the nearest Service Ontario
+                        this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${it.CurrentLatititue},${it.currentLongitude}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
+                        cu = it
+
+
+                    }
+
+
+                }
+
+            }
+
+        })
+
+
+
 
     }
 
@@ -139,54 +181,40 @@ class rideDetails : AppCompatActivity() {
                 val gson = Gson()
                 var places =  gson.fromJson(response.body?.string(), Example::class.java)
 
-
-                //Setting up destination name of current user
-                CurrrentUser.Destination = places.results[0].formattedAddress
-
-
-
-
-
-
-                var lati =  places.results[0].geometry.location.lat
-                var longi = places.results[0].geometry.location.lng
-
-                              //setting up lon & lat for the current user to send
-
-
-
-                CurrrentUser.DestinationLati = lati.toString()
-                CurrrentUser.Destinationlongi = longi.toString()
-
-                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude , places.results[0].geometry.location.lat , places.results[0].geometry.location.lng)
-
-                UserDetailsViewModel.update(userDetails)
-
+                 lati =  places.results[0].geometry.location.lat
+                 longi = places.results[0].geometry.location.lng
 
 
                 //passing Destination location and the current location of the user
                 val locationA = Location("point A")
                 locationA.setLatitude(lati);
                 locationA.setLongitude(longi);
-
-
+//
+//
                 val locationB = Location("point B")
-                locationB.setLatitude(CurrrentUser.CurrentLati.toDouble());
-                locationB.setLongitude(CurrrentUser.CurrentLongi.toDouble());
+                locationB.setLatitude(cu.CurrentLatititue);
+                locationB.setLongitude(cu.currentLongitude);
+//
+//
+//
+
+                //setting up lon & lat for the current user to send
 
 
 
-                //converting distance from meters to km
                 val distance  = locationB.distanceTo(locationA) / 1000;
 
                 //funtion to calculate fare
                 var fare  =  distance * 10
 
 
+
+
                 //setting up on ui thats why runing on diffrent thread of UI
                 runOnUiThread{
+
                     Destination.setText(
-                        CurrrentUser.Destination )
+                        places.results[0].formattedAddress )
                     Distance.setText(distance.toString() + "   KM")
                     EstimatedPrice.setText("$ ${fare.toString()}")
 
@@ -201,9 +229,17 @@ class rideDetails : AppCompatActivity() {
 
 
 
+
     }
 
+    private fun hello(){
 
+
+
+
+
+
+    }
 
 
 

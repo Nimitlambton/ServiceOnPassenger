@@ -2,6 +2,8 @@ package com.lambtonserviceon.AppActivity
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -14,10 +16,13 @@ import com.google.gson.Gson
 import com.google.maps.android.PolyUtil
 import com.lambtonserviceon.R
 import com.lambtonserviceon.dbConfig.userDetails.UserDetails
+import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import com.lambtonserviceon.models.User
 import com.lambtonserviceon.models.directions.Direction
 import com.lambtonserviceon.models.directions.Step
 import okhttp3.*
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 import java.io.IOException
 
 
@@ -37,6 +42,13 @@ private lateinit var mMap: GoogleMap
 private lateinit var myMarker: Marker
 
 private lateinit var cu : UserDetails
+private lateinit var UserDetailsViewModel: userDeatailsViewModel
+private lateinit var  currentUsers :  List<UserDetails>
+
+var DestinationAnontation = LatLng(0.0 , 0.0)
+
+//Current location
+var currentLocation = LatLng(0.0 , 0.0)
 
 class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClickListener {
 
@@ -47,10 +59,19 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         setContentView(R.layout.activity_map)
 
 
+
+
+
+
         //setting up current user from Main activity
 
+        UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
         cu = intent.getParcelableExtra("UserDetails")
+
+
+       // hello()
+
 
 
         //setting up Googlemap
@@ -59,6 +80,8 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
         //back btn setup
         this.setupActionBarBtn()
+
+
     }
 
     //backPressSupporting function
@@ -81,32 +104,74 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
     override fun onMapReady(googleMap: GoogleMap) {
 
 
-        mMap = googleMap
-        mMap.clear()
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
 
-        //Destination location
-        var DestinationAnontation = LatLng(cu.DestinationLatititue, cu.DestinationLongitude.toDouble())
+                currentUsers = it
+                println("Size "+ currentUsers.size)
 
-        //Current location
-        var currentLocation = LatLng( cu.CurrentLatititue ,cu.currentLongitude)
-
-
-
-        mMap?.animateCamera(CameraUpdateFactory.newLatLng(currentLocation))
-        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
-        myMarker = mMap.addMarker(MarkerOptions().position(currentLocation).title("hey you are here"))
-        myMarker.showInfoWindow()
+                currentUsers.map {
 
 
-        myMarker =
-            mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
+
+                    if(cu.UserId == it.UserId ){
+
+                        cu = it
+
+
+                        currentLocation = LatLng(   it.CurrentLatititue , it.currentLongitude)
+                        DestinationAnontation = LatLng(it.DestinationLatititue ,it.DestinationLongitude )
+                        val url = getURL(currentLocation, DestinationAnontation)
+                        println(url)
+                        this.run(url)
+
+
+
+                        mMap = googleMap
+                        mMap.clear()
+
+
+
+
+                        mMap?.animateCamera(CameraUpdateFactory.newLatLng(currentLocation))
+                        mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10f))
+                        myMarker = mMap.addMarker(MarkerOptions().position(currentLocation).title("hey you are here"))
+                        myMarker.showInfoWindow()
+
+
+                        myMarker =
+                            mMap.addMarker(MarkerOptions().position(DestinationAnontation).title("hey you want to go here"))
+
+
+
+
+
+                    }
+
+
+                }
+
+            }
+
+        })
+
+
+
+
+
+
 
 
         //build Url to fetch google api
-        val url = getURL(currentLocation, DestinationAnontation)
+
 
         //okHttp fetch  to get polyLine between destination and current user
-        this.run(url)
+
+
+        //
+
+
 
     }
 
@@ -145,11 +210,8 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
             override fun onResponse(call: Call, response: Response) {
 
-
                 val gson = Gson()
                 var Direction2 = gson.fromJson(response.body?.string(), Direction::class.java)
-
-
 
                 //function to fetch steps and pass to ADD polyline
                 addPolyLines(Direction2.routes[0].legs[0].steps)
@@ -169,8 +231,6 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         }
 
 
-
-
         runOnUiThread {
 
            val  polyLineOption = PolylineOptions()
@@ -186,6 +246,10 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
 
     }
+
+
+
+
 }
 
 

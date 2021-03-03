@@ -37,19 +37,15 @@ class MainActivity : AppCompatActivity()  {
     lateinit var  title  : TextView
 
 
-    private lateinit var CurrrentUser : User
-
     private lateinit var cu : UserDetails
-
 
     //Ok hhtp client , used to Fetch and retrieve Rest api data
     private val client = OkHttpClient()
 
 
-
     private lateinit var UserDetailsViewModel: userDeatailsViewModel
     private lateinit var  currentUsers :  List<UserDetails>
-    private lateinit var  currentUser :  UserDetails
+
 
 
 
@@ -62,8 +58,6 @@ class MainActivity : AppCompatActivity()  {
         cu = intent.getParcelableExtra("userdetails")
 
 
-        //Initalizing of com.lambtonserviceon.models.User
-         CurrrentUser = User()
 
         //View button Initialization
         Searchbtn = findViewById(R.id.Searchbtn)
@@ -87,14 +81,8 @@ class MainActivity : AppCompatActivity()  {
             // Update the cached copy of the words in the adapter.
             words?.let {
 
-
                 currentUsers = it
-
-                println("helllllllooooworrllldd")
                 println("Size "+ currentUsers.size)
-
-
-
 
                 currentUsers.map {
 
@@ -217,38 +205,28 @@ class MainActivity : AppCompatActivity()  {
 
             override fun onResponse(call: Call, response: Response) {
 
+
                 //to Convert json to anroid or kotlin readable data we have to use Gson
                 val gson = Gson()
                 val mUser =  gson.fromJson(response.body?.string(), GetZipCode::class.java)
 
 
-
-                CurrrentUser.CurrentLati = mUser.location[0].latitude
-                CurrrentUser.CurrentLongi =  mUser.location[0].longitude
-
-
-                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, mUser.location[0].latitude.toDouble(),mUser.location[0].longitude.toDouble() , cu.DestinationLatititue , cu.DestinationLongitude)
-
+                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, mUser.location[0].latitude.toDouble(), mUser.location[0].longitude.toDouble(),0.0,0.0)
                 UserDetailsViewModel.update(userDetails)
 
 
-
-
-
-
-                runOnUiThread {
-
-
                 val intent = Intent(this@MainActivity, rideDetails::class.java)
-                    intent.putExtra("com.lambtonserviceon.models.User" , CurrrentUser )
-                    intent.putExtra("userDetails" , cu )
+                intent.putExtra("userDetailsS" , cu )
                 startActivity(intent)
 
-                }
+
+
 
             }
 
+
         }
+
 
         )
 
@@ -257,6 +235,37 @@ class MainActivity : AppCompatActivity()  {
 
 
     private fun hello(){
+
+
+
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
+
+                currentUsers = it
+                println("Size "+ currentUsers.size)
+
+
+
+
+                currentUsers.map {
+
+
+
+                    if(cu.UserId == it.UserId ){
+
+                        println( it.CurrentLatititue)
+                        println(it.currentLongitude)
+
+
+                    }
+
+
+                }
+
+            }
+
+        })
 
 
 
