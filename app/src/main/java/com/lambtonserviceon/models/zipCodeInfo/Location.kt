@@ -2,7 +2,7 @@ package com.lambton
 
 import com.google.gson.annotations.SerializedName
 
-   
+
 data class Location (
 
    @SerializedName("zipCode") var zipCode : String,

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.example.Example
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -93,9 +94,12 @@ class rideDetails : AppCompatActivity() {
 
             val db = Firebase.firestore
 
-            db.collection("ridedetails").document().set(cu)
+            db.collection("ridedetails").document("ride").set(userDetails, SetOptions.merge() )
 
+            //db.collection("ridedetails").document()
             var intent = Intent( this , ConfirmRide::class.java)
+
+
 
             startActivity(intent)
 

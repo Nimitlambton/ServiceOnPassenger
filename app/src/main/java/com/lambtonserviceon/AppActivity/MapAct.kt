@@ -230,7 +230,6 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
 
         }
 
-
         runOnUiThread {
 
            val  polyLineOption = PolylineOptions()
