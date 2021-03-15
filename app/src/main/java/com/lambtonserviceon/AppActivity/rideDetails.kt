@@ -28,6 +28,8 @@ lateinit var  Destination : EditText
 lateinit var  Distance:  EditText
 lateinit var EstimatedPrice : EditText
 private lateinit var cu : UserDetails
+private lateinit var formattedCurrentaddress : String
+private lateinit var formattedaddress : String
 private lateinit var UserDetailsViewModel: userDeatailsViewModel
 //initalizing of OKHttp Client
 private val client = OkHttpClient()
@@ -54,6 +56,7 @@ class rideDetails : AppCompatActivity() {
 
         //Initializing of user data from MainActivity
         cu = intent.getParcelableExtra("userDetailsS")
+
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
 
 
@@ -70,7 +73,7 @@ class rideDetails : AppCompatActivity() {
 
 
 
-            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude ,lati,longi  )
+            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude ,lati,longi ,formattedaddress , formattedCurrentaddress )
 
             UserDetailsViewModel.update(userDetails)
 
@@ -87,14 +90,14 @@ class rideDetails : AppCompatActivity() {
 
 
 
-            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude , lati , longi)
+            val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, cu.CurrentLatititue,cu.currentLongitude , lati , longi , formattedaddress , formattedCurrentaddress)
 
             UserDetailsViewModel.update(userDetails)
 
 
             val db = Firebase.firestore
 
-            db.collection("ridedetails").document("ride").set(userDetails, SetOptions.merge() )
+            db.collection("ridedetails").document("ride").set(userDetails , SetOptions.merge() )
 
             //db.collection("ridedetails").document()
             var intent = Intent( this , ConfirmRide::class.java)
@@ -130,6 +133,7 @@ class rideDetails : AppCompatActivity() {
                         this.run("https://maps.googleapis.com/maps/api/place/textsearch/json?query=Service+Ontario+in+Toronto&location=${it.CurrentLatititue},${it.currentLongitude}&rankby=distance&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
                         cu = it
 
+                        this.run2("https://maps.googleapis.com/maps/api/geocode/json?latlng=${it.CurrentLatititue},${it.currentLongitude}&sensor=true&key=AIzaSyDfitQFZjRn76sFCbB4dXzjf7r1i3GU-Lc")
 
                     }
 
@@ -163,7 +167,7 @@ class rideDetails : AppCompatActivity() {
 
 
 
-//calling Rest Api
+//calling Rest Api performed asyc
     fun run(url: String) {
 
         val request = Request.Builder()
@@ -201,7 +205,6 @@ class rideDetails : AppCompatActivity() {
 //
 //
 //
-
                 //setting up lon & lat for the current user to send
 
 
@@ -213,9 +216,11 @@ class rideDetails : AppCompatActivity() {
 
 
 
+                formattedCurrentaddress =  places.results[0].formattedAddress
 
                 //setting up on ui thats why runing on diffrent thread of UI
                 runOnUiThread{
+
 
                     Destination.setText(
                         places.results[0].formattedAddress )
@@ -223,30 +228,33 @@ class rideDetails : AppCompatActivity() {
                     EstimatedPrice.setText("$ ${fare.toString()}")
 
                 }
+            }
+        })
+    }
+
+
+    //calling Rest Api
+    fun run2(url: String) {
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+
+            }
+            override fun onResponse(call: Call, response: Response) {
+                val gson = Gson()
+                var places =  gson.fromJson(response.body?.string(), Example::class.java)
+                formattedaddress =  places.results[0].formattedAddress
+
+                println(formattedaddress)
 
             }
 
 
         })
 
-
-
-
-
-
     }
-
-    private fun hello(){
-
-
-
-
-
-
-    }
-
-
-
-
 
 }

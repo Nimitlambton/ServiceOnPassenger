@@ -11,11 +11,6 @@ import kotlinx.coroutines.launch
 
 class userDeatailsViewModel(application: Application) : AndroidViewModel(application) {
 
-
-
-
-
-
     // The ViewModel maintains a reference to the repository to get data.
     private val repository: userDetailsRepo
 
@@ -25,21 +20,12 @@ class userDeatailsViewModel(application: Application) : AndroidViewModel(applica
 
 
     init {
-
-
-
         val FeeDao =  userDeatilsDatabase.getDatabase(application, viewModelScope).userDeatilsDao()
 
         repository = userDetailsRepo(FeeDao)
 
         alldata = repository.allData
-
-
-
-
     }
-
-
 
 
     fun insert(User: UserDetails) = viewModelScope.launch {

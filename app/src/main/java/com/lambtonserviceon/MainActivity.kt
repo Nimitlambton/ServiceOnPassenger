@@ -35,8 +35,6 @@ class MainActivity : AppCompatActivity()  {
     lateinit var Searchbtn : Button
     lateinit var  postalCode : EditText
     lateinit var  title  : TextView
-
-
     private lateinit var cu : UserDetails
 
     //Ok hhtp client , used to Fetch and retrieve Rest api data
@@ -91,6 +89,19 @@ class MainActivity : AppCompatActivity()  {
                     if(cu.UserId == it.UserId ){
 
                         title.text = "welcome    " + it.FirstName
+                        cu = it
+
+
+                    }
+
+
+
+
+
+
+                    Searchbtn.setOnClickListener {
+                        //calling zipLocation Api
+                        this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
 
                     }
 
@@ -132,13 +143,6 @@ class MainActivity : AppCompatActivity()  {
         }
 
 
-        Searchbtn.setOnClickListener {
-
-
-            //calling zipLocation Api
-            this.run("  https://thezipcodes.com/api/v1/search?zipCode=${postalCode.text}&countryCode=CA&apiKey=82c04d7a7ad16e63a925ed39dd44b975")
-
-        }
 
 
         postalCode.addTextChangedListener(object : TextWatcher {
@@ -208,10 +212,11 @@ class MainActivity : AppCompatActivity()  {
 
                 //to Convert json to anroid or kotlin readable data we have to use Gson
                 val gson = Gson()
+
                 val mUser =  gson.fromJson(response.body?.string(), GetZipCode::class.java)
 
 
-                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, mUser.location[0].latitude.toDouble(), mUser.location[0].longitude.toDouble(),0.0,0.0)
+                val userDetails = UserDetails(cu.UserId,cu.FirstName,cu.LastNmae,cu.Email , cu.Password ,cu.UserImg, mUser.location[0].latitude.toDouble(), mUser.location[0].longitude.toDouble(),0.0,0.0, "" , "")
                 UserDetailsViewModel.update(userDetails)
 
 
@@ -234,40 +239,40 @@ class MainActivity : AppCompatActivity()  {
 
 
 
-    private fun hello(){
-
-
-
-        UserDetailsViewModel.alldata.observe(this, Observer { words ->
-            // Update the cached copy of the words in the adapter.
-            words?.let {
-
-                currentUsers = it
-                println("Size "+ currentUsers.size)
-
-
-
-
-                currentUsers.map {
-
-
-
-                    if(cu.UserId == it.UserId ){
-
-                        println( it.CurrentLatititue)
-                        println(it.currentLongitude)
-
-
-                    }
-
-
-                }
-
-            }
-
-        })
-
-
-
-    }
+//    private fun hello(){
+//
+//
+//
+//        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+//            // Update the cached copy of the words in the adapter.
+//            words?.let {
+//
+//                currentUsers = it
+//                println("Size "+ currentUsers.size)
+//
+//
+//
+//
+//                currentUsers.map {
+//
+//
+//
+//                    if(cu.UserId == it.UserId ){
+//
+//                        println( it.CurrentLatititue)
+//                        println(it.currentLongitude)
+//
+//
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//        })
+//
+//
+//
+//    }
 }

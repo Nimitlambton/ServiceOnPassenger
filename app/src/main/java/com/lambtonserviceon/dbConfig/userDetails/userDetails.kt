@@ -20,5 +20,7 @@ class UserDetails(
     @ColumnInfo(name="CurrentLatititue ") val CurrentLatititue:Double,
     @ColumnInfo(name="currentLongitude ") val currentLongitude:Double,
     @ColumnInfo(name="DestinationLatititue ") val DestinationLatititue:Double,
-    @ColumnInfo(name="DestinationLongitude ") val DestinationLongitude:Double
+    @ColumnInfo(name="DestinationLongitude ") val DestinationLongitude:Double,
+    @ColumnInfo(name="FormattedDestination") val formattedDestination:String,
+    @ColumnInfo(name="FormattedCurrentLocation") val FormattedCurrentLocation:String
  ) : Parcelable

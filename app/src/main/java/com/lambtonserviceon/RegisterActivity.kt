@@ -55,14 +55,6 @@ class RegisterActivity : AppCompatActivity() {
         imageView  = findViewById(R.id.Dispic)
 
 
-
-
-
-
-
-
-
-
         login.setOnClickListener {
 
 
@@ -144,7 +136,7 @@ class RegisterActivity : AppCompatActivity() {
         }else {
 
 
-            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData , 0.0 , 0.0 , 0.0,0.0)
+            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData , 0.0 , 0.0 , 0.0,0.0, "", "")
             UserDetailsViewModel.insert(userDetails)
             Toast.makeText(this , "YAYA! You are finally registered ..!!" ,Toast.LENGTH_LONG).show()
             finish()
