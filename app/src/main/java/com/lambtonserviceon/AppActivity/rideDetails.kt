@@ -215,8 +215,8 @@ class rideDetails : AppCompatActivity() {
                 var fare  =  distance * 10
 
 
-
-                formattedCurrentaddress =  places.results[0].formattedAddress
+                formattedaddress =  places.results[0].formattedAddress
+               // formattedCurrentaddress =  places.results[0].formattedAddress
 
                 //setting up on ui thats why runing on diffrent thread of UI
                 runOnUiThread{
@@ -246,9 +246,9 @@ class rideDetails : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val gson = Gson()
                 var places =  gson.fromJson(response.body?.string(), Example::class.java)
-                formattedaddress =  places.results[0].formattedAddress
+                formattedCurrentaddress =  places.results[0].formattedAddress
 
-                println(formattedaddress)
+                println(formattedCurrentaddress)
 
             }
 

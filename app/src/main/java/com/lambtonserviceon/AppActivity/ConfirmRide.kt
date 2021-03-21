@@ -3,6 +3,8 @@ package com.lambtonserviceon.AppActivity
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -25,7 +27,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 private lateinit var status :TextView
 private lateinit var Drivername :TextView
-
+private lateinit var Board :Button
 //Google map initialization
 private lateinit var mMap: GoogleMap
 private lateinit var myMarker: Marker
@@ -39,6 +41,10 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
     //Current location
     private var riderlocation = LatLng(0.0 , 0.0)
 
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_ride)
@@ -50,6 +56,7 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
         mapFragment.getMapAsync(this)
         status = findViewById(R.id.status)
         Drivername  =  findViewById(R.id.dname)
+        Board = findViewById(R.id.board)
 
 
 
@@ -131,6 +138,18 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
 
 
+                Board.visibility = View.INVISIBLE
+
+                val driverreachedcheck =  snapshot.get("rideStatus").toString()
+
+                if(driverreachedcheck == "riderlocation" ){
+
+                    Board.visibility = View.VISIBLE
+
+                }
+
+
+
             } else {
 
 
@@ -141,6 +160,15 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
 
 
+
+
+        Board.setOnClickListener {
+
+            val docRef = db.collection("ridedetails").document("ride").collection("driverDetails").document("details" )
+
+            docRef.update("riderborded","true")
+
+        }
 
 
     }
