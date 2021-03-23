@@ -10,10 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.lambtonserviceon.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -23,7 +20,6 @@ import com.lambtonserviceon.models.directions.Direction
 import com.lambtonserviceon.models.directions.Step
 import okhttp3.*
 import java.io.IOException
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 private lateinit var status :TextView
 private lateinit var Drivername :TextView
@@ -31,13 +27,13 @@ private lateinit var Board :Button
 //Google map initialization
 private lateinit var mMap: GoogleMap
 private lateinit var myMarker: Marker
-
+var polylines: MutableList<Polyline> = mutableListOf<Polyline>()
 private val client = OkHttpClient()
 private lateinit var  decodedPolyLine : List <LatLng>
 class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
 
     private var driverLocation = LatLng(0.0 , 0.0)
-
+    var destinationlocation = LatLng(0.0, 0.0)
     //Current location
     private var riderlocation = LatLng(0.0 , 0.0)
 
@@ -113,6 +109,11 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
                 println("driverloc"+driverLocation)
 
 
+                val destilati = snapshot.get("destinationLatititue").toString()
+                val destilongi = snapshot.get("destinationLongitude").toString()
+
+                destinationlocation = LatLng(destilati.toDouble(), destilongi.toDouble())
+
 
 
                 mMap = googleMap
@@ -125,6 +126,19 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
                     mMap.addMarker(MarkerOptions() .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                         .position(riderlocation).title("hey you are here"))
 
+
+                myMarker =
+                    mMap.addMarker(
+                        MarkerOptions().icon(
+                            BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_YELLOW
+                            )
+                        )
+                            .position(destinationlocation).title("Destination!!")
+                    )
+
+
+
                 mMap?.animateCamera(CameraUpdateFactory.newLatLng(driverLocation))
                 mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(driverLocation, 10f))
 
@@ -132,10 +146,13 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
                 val url = getURL(driverLocation, riderlocation)
                 println(url)
-                this.run(url)
+                this.run(url , "GREEN")
 
 
 
+                val url2 = getURL(riderlocation, destinationlocation)
+
+                this.run(url2, "RED")
 
 
                 Board.visibility = View.INVISIBLE
@@ -191,7 +208,9 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
     }
 
-    fun run(url: String) {
+
+
+    fun run(url: String, color: String) {
 
         val request = Request.Builder()
             .url(url)
@@ -201,8 +220,8 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
 
             override fun onFailure(call: Call, e: IOException) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 
+                println("hey its failed..!")
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -211,36 +230,51 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
                 var Direction2 = gson.fromJson(response.body?.string(), Direction::class.java)
 
                 //function to fetch steps and pass to ADD polyline
-                addPolyLines(Direction2.routes[0].legs[0].steps)
+                addPolyLines(Direction2.routes[0].legs[0].steps, color)
             }
 
         })
+
+
     }
 
 
-    private fun addPolyLines(steps: List<Step>) {
+    private fun addPolyLines(steps: List<Step>, color: String) {
 
         val path: MutableList<List<LatLng>> = ArrayList()
 
-        for (step in steps) {
-            decodedPolyLine = PolyUtil.decode(step.polyline.points);
-            path.add(decodedPolyLine)
+        if(steps !== null){
 
+            for (step in steps) {
+                decodedPolyLine = PolyUtil.decode(step.polyline.points);
+                path.add(decodedPolyLine)
+
+            }
         }
 
         runOnUiThread {
 
-            val  polyLineOption = PolylineOptions()
+            val polyLineOption = PolylineOptions()
+            if (color == "RED") {
 
-            polyLineOption.color(Color.GREEN)
+                val col1 = Color.RED
+                polyLineOption.color(col1)
 
-            for(p in path)
+            } else {
+
+                val color2 = Color.YELLOW
+                polyLineOption.color(color2)
+            }
+
+
+            for (p in path)
+
                 polyLineOption.addAll(p)
 
-            val polyline = mMap.addPolyline(polyLineOption)
+            polylines.add(mMap.addPolyline(polyLineOption));
+
 
         }
-
 
     }
 }
