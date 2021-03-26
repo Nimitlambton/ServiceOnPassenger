@@ -30,7 +30,7 @@ import androidx.lifecycle.Observer
 class MainActivity : AppCompatActivity()  {
 
 
-
+    //dummy
     lateinit  var toggle : ActionBarDrawerToggle
     lateinit var Searchbtn : Button
     lateinit var  postalCode : EditText
@@ -93,11 +93,6 @@ class MainActivity : AppCompatActivity()  {
 
 
                     }
-
-
-
-
-
 
                     Searchbtn.setOnClickListener {
                         //calling zipLocation Api

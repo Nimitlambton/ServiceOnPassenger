@@ -1,5 +1,4 @@
 package com.lambtonserviceon.AppActivity
-
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -272,7 +271,6 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
                 polyLineOption.addAll(p)
 
             polylines.add(mMap.addPolyline(polyLineOption));
-
 
         }
 

@@ -45,6 +45,7 @@ private lateinit var cu : UserDetails
 private lateinit var UserDetailsViewModel: userDeatailsViewModel
 private lateinit var  currentUsers :  List<UserDetails>
 
+//dummy
 var DestinationAnontation = LatLng(0.0 , 0.0)
 
 //Current location

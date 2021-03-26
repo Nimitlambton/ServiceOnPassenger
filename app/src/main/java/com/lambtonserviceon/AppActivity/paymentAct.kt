@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -13,7 +12,6 @@ import com.example.labtest1.feeskeeper.nimit.dbConfig.cardDetailsViewMOdel
 import com.lambtonserviceon.dbConfig.CardDetails.CardDetails
 import androidx.lifecycle.Observer
 import com.lambtonserviceon.R
-import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 
 
 class paymentAct : AppCompatActivity() {
@@ -47,7 +45,7 @@ class paymentAct : AppCompatActivity() {
 
 
         //initialize  user data
-        this.SetUserDetails()
+        this.SetPaymentInfo()
 
        this.setupActionBarBtn()
 
@@ -108,7 +106,7 @@ class paymentAct : AppCompatActivity() {
     }
 
     //function to initialize user
-    private  fun SetUserDetails(){
+    private  fun SetPaymentInfo(){
 
         CardDetailsViewModel.alldata.observe(this, Observer { words ->
             // Update the cached copy of the words in the adapter.
