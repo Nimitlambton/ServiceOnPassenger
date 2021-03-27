@@ -59,11 +59,6 @@ class MapAct : AppCompatActivity() , OnMapReadyCallback ,GoogleMap.OnMarkerClick
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-
-
-
-
-
         //setting up current user from Main activity
 
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)

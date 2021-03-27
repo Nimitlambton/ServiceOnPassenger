@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import android.util.Patterns
 import android.view.View
 import android.widget.*
+import androidx.lifecycle.Observer
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +19,7 @@ import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
 import kotlinx.android.synthetic.main.activity_register.*
 import java.io.ByteArrayOutputStream
+import java.util.regex.Pattern
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -30,7 +33,14 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var imageView: ImageView
     var imgData = ""
 
+
+
+    private lateinit var  currentUsers :  List<UserDetails>
+    private lateinit var  currentUser :  UserDetails
     private lateinit var UserDetailsViewModel: userDeatailsViewModel
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -43,6 +53,22 @@ class RegisterActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), 1)
 
         UserDetailsViewModel = ViewModelProvider(this).get(userDeatailsViewModel::class.java)
+
+
+
+        UserDetailsViewModel.alldata.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let {
+
+
+                currentUsers = it
+
+                println("helllllllooooworrllldd")
+                println("Size "+ currentUsers.size)
+
+            }
+
+        })
 
 
         login  = findViewById(R.id.login)
@@ -122,7 +148,6 @@ class RegisterActivity : AppCompatActivity() {
 
             Toast.makeText(this , "Enter Email" ,Toast.LENGTH_LONG).show()
 
-
             return
 
         }
@@ -136,10 +161,34 @@ class RegisterActivity : AppCompatActivity() {
         }else {
 
 
-            val userDetails = UserDetails(0,firstname,lastname,email , password, imgData , 0.0 , 0.0 , 0.0,0.0, "", "")
-            UserDetailsViewModel.insert(userDetails)
-            Toast.makeText(this , "YAYA! You are finally registered ..!!" ,Toast.LENGTH_LONG).show()
-            finish()
+            var result = validEmail(email)
+            var  exist = ifUserExist(email)
+
+
+            if (result) {
+
+
+               if ( !exist){
+
+                   val userDetails = UserDetails(0,firstname,lastname,email , password, imgData , 0.0 , 0.0 , 0.0,0.0, "", "")
+                   UserDetailsViewModel.insert(userDetails)
+                   Toast.makeText(this , "YAYA! You are finally registered ..!!" ,Toast.LENGTH_LONG).show()
+                   finish()
+
+               }
+                else{
+
+                   Toast.makeText(this , "User already Exists!!" ,Toast.LENGTH_LONG).show()
+
+               }
+
+            }
+
+            else{
+
+                Toast.makeText(this , "Not a well formed email" ,Toast.LENGTH_LONG).show()
+            }
+
 
         }
 
@@ -170,6 +219,29 @@ class RegisterActivity : AppCompatActivity() {
             this.imgData = encoded
 
         }
+    }
+
+
+    private fun   validEmail( email: String): Boolean {
+         val pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
+
+
+    private fun ifUserExist(email: String) : Boolean {
+
+        var exits = false
+        currentUsers.map {
+
+            if(it.Email.equals(email) ) {
+
+                exits = true
+            }
+
+        }
+
+        return  exits
+
     }
 
 
