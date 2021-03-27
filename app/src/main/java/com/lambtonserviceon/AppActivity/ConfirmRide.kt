@@ -1,10 +1,12 @@
 package com.lambtonserviceon.AppActivity
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -29,6 +31,10 @@ private lateinit var myMarker: Marker
 var polylines: MutableList<Polyline> = mutableListOf<Polyline>()
 private val client = OkHttpClient()
 private lateinit var  decodedPolyLine : List <LatLng>
+private lateinit var  riderstatus : String
+private lateinit var url:String
+private lateinit var url2:String
+
 class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
 
     private var driverLocation = LatLng(0.0 , 0.0)
@@ -88,6 +94,8 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
             if (snapshot != null && snapshot.exists()) {
 
                 println("DRIVER DETAILS SUCCESS")
+                riderstatus = snapshot.get("rideStatus").toString()
+
 
                 status.setText("Drive Found")
                 Drivername.setText(snapshot.get("firstName").toString() )
@@ -141,17 +149,12 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
                 mMap?.animateCamera(CameraUpdateFactory.newLatLng(driverLocation))
                 mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(driverLocation, 10f))
 
-
-
-                val url = getURL(driverLocation, riderlocation)
+                url = getURL(driverLocation, riderlocation)
                 println(url)
-                this.run(url , "GREEN")
 
 
+                 url2 = getURL(riderlocation, destinationlocation)
 
-                val url2 = getURL(riderlocation, destinationlocation)
-
-                this.run(url2, "RED")
 
 
                 Board.visibility = View.INVISIBLE
@@ -162,24 +165,43 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
                     Board.visibility = View.VISIBLE
 
+
                 }
 
+
+
+                if (riderstatus == "") {
+
+                   // removepoly()
+
+                    run(url, "GREEN")
+                    run(url2, "RED")
+                    println("riderlocation empty")
+
+                } else if (riderstatus == "riderlocation") {
+                 //   removepoly()
+                    run(url2, "RED")
+                } else if (riderstatus == "destinationlocation") {
+                 //   removepoly()
+                    println("riders reached at destination with pay to the rider ")
+
+                    var goto = Intent(this , enRouteDriver::class.java)
+
+                    startActivity(goto)
+
+                }
 
 
             } else {
 
 
             }
+
         }
-
-
-
-
-
-
 
         Board.setOnClickListener {
 
+            Board.isVisible = false
             val docRef = db.collection("ridedetails").document("ride").collection("driverDetails").document("details" )
 
             docRef.update("riderborded","true")
@@ -274,5 +296,17 @@ class ConfirmRide : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerCl
 
         }
 
+    }
+
+
+
+
+    fun removepoly(){
+
+        for (line in polylines) {
+
+            line.remove()
+        }
+        polylines.clear()
     }
 }
