@@ -4,6 +4,7 @@ package com.lambtonserviceon.AppActivity
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +18,9 @@ import com.google.gson.Gson
 import com.lambtonserviceon.R
 import com.lambtonserviceon.dbConfig.userDetails.UserDetails
 import com.lambtonserviceon.dbConfig.userDetails.userDeatailsViewModel
-import com.lambtonserviceon.models.User
 import okhttp3.*
 import java.io.IOException
+import kotlin.math.roundToInt
 
 
 lateinit var  mapbtn :Button
@@ -203,6 +204,16 @@ class rideDetails : AppCompatActivity() {
                 locationB.setLatitude(cu.CurrentLatititue);
                 locationB.setLongitude(cu.currentLongitude);
 //
+
+                var str =  places.results[0].formattedAddress
+
+                val spt =  str.split(",")
+
+                println{
+                    spt.map {
+                       print(it)
+                    }
+                }
 //
 //
                 //setting up lon & lat for the current user to send
@@ -210,23 +221,24 @@ class rideDetails : AppCompatActivity() {
 
 
                 val distance  = locationB.distanceTo(locationA) / 1000;
+                val roundeddist = distance.roundToInt()
 
                 //funtion to calculate fare
-                var fare  =  distance * 10
+                var fare  =  roundeddist * 10
+
+
+              //  Distance.setText("Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the");
+
+               // Destination.layoutParams
+
+
 
 
                 formattedaddress =  places.results[0].formattedAddress
-               // formattedCurrentaddress =  places.results[0].formattedAddress
-
-                //setting up on ui thats why runing on diffrent thread of UI
                 runOnUiThread{
-
-
-                    Destination.setText(
-                        places.results[0].formattedAddress )
-                    Distance.setText(distance.toString() + "   KM")
+                    Destination.setText(formattedaddress)
+                    Distance.setText(roundeddist.toString() + "   KM")
                     EstimatedPrice.setText("$ ${fare.toString()}")
-
                 }
             }
         })
